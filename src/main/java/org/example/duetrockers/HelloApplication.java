@@ -1,5 +1,6 @@
 package org.example.duetrockers;
 
+import Views.ViewManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -11,10 +12,38 @@ import java.io.IOException;
 import java.util.List;
 
 public class HelloApplication extends Application {
+
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 700;
+
+    private ViewManager manager;
+
     @Override
     public void start(Stage stage) throws IOException
     {
+        manager = new ViewManager(stage, HEIGHT, WIDTH);
 
+        manager.switchView(ViewManager.ViewType.START_MENU);
+
+        stage.setTitle("Piper Games!");
+
+        stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception
+    {
+        System.out.println("Shutting down...");
+        super.stop();
+    }
+
+    public static void main(String[] args)
+    {
+        launch();
+    }
+
+    private void testDatabase()
+    {
         Game game = new Game("Chess", 2, 2);
         GameDAO dao = new GameDAO();
 
@@ -51,17 +80,17 @@ public class HelloApplication extends Application {
 
         game.setMaxPlayers(3);
 
-       if(dao.updateGame(game))
-       {
-           System.out.println("Game updated");
-       }
+        if(dao.updateGame(game))
+        {
+            System.out.println("Game updated");
+        }
 
         System.out.println("Max players: "+game.getMaxPlayers());
 
-       if(dao.deleteGame(game))
-       {
-           System.out.println("Game deleted");
-       }
+        if(dao.deleteGame(game))
+        {
+            System.out.println("Game deleted");
+        }
 
         games = dao.getAllGames();
 
@@ -69,17 +98,5 @@ public class HelloApplication extends Application {
         {
             System.out.println("Game name: "+g.getGameName()+"\nId: "+g.getId());
         }
-
-
-        AnchorPane root = new AnchorPane();
-        Scene scene = new Scene(root, 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public static void main(String[] args)
-    {
-        launch();
     }
 }
