@@ -6,7 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.duetrockers.DAO.GameDAO;
+import org.example.duetrockers.DAO.PlayerDAO;
 import org.example.duetrockers.entities.Game;
+import org.example.duetrockers.entities.Player;
 
 import java.io.IOException;
 import java.util.List;

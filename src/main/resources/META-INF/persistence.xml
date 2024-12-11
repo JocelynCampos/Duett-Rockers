@@ -14,7 +14,7 @@
             <property name="jakarta.persistence.jdbc.user"
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="INSERT_YOUR_MYSQL_PASSWORD_HERE"/>
+                      value="PASSWORD"/>
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
