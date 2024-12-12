@@ -2,6 +2,8 @@ package Views;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 public class ViewMainApp extends View
 {
@@ -11,6 +13,7 @@ public class ViewMainApp extends View
 
     private Button add, update, returnButton, exit;
 
+    private Label staffLabel;
 
     public ViewMainApp(int width, int height, ViewManager manager)
     {
@@ -50,7 +53,14 @@ public class ViewMainApp extends View
             Platform.exit();
         });
 
-        root.getChildren().addAll(add, update, returnButton, exit);
+        staffLabel = new Label(manager.getCurrentStaff());
+
+        staffLabel.setFont(new Font(20));
+
+        staffLabel.setLayoutX(width / 8 - staffLabel.getPrefWidth() / 2);
+        staffLabel.setLayoutY((height / 8 - staffLabel.getPrefHeight() / 2) - 30);
+
+        root.getChildren().addAll(add, update, returnButton, exit, staffLabel);
     }
 
 }

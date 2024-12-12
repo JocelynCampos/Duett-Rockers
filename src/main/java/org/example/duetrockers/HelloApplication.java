@@ -44,7 +44,7 @@ public class HelloApplication extends Application {
 
     private void testDatabase()
     {
-        Game game = new Game("Chess", 2, 2);
+        Game game = new Game("Chess", 2);
         GameDAO dao = new GameDAO();
 
         if(dao.saveGame(game))
@@ -60,7 +60,7 @@ public class HelloApplication extends Application {
 
         System.out.println("Game fetched: " +testGame.getGameName()+"\nId: "+testGame.getId());
 
-        Game testGame2 = new Game("League of Legends", 10, 10);
+        Game testGame2 = new Game("League of Legends", 10);
 
         if(dao.saveGame(testGame2))
         {
@@ -78,14 +78,14 @@ public class HelloApplication extends Application {
             System.out.println("Game name: "+g.getGameName()+"\nId: "+g.getId());
         }
 
-        game.setMaxPlayers(3);
+        game.setPlayerCount(3);
 
         if(dao.updateGame(game))
         {
             System.out.println("Game updated");
         }
 
-        System.out.println("Max players: "+game.getMaxPlayers());
+        System.out.println("Max players: "+ game.getPlayerCount());
 
         if(dao.deleteGame(game))
         {

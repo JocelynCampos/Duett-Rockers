@@ -9,6 +9,7 @@ public class ViewManager
     private Stage stage;
     private View currentView, previousView;
     private int height, width;
+    private String currentStaff;
 
     public ViewManager(Stage stage, int height, int width)
     {
@@ -53,4 +54,13 @@ public class ViewManager
         MAIN_APP
     }
 
+    public String getCurrentStaff()
+    {
+        return currentStaff;
+    }
+
+    public void setCurrentStaff(String currentStaff)
+    {
+        this.currentStaff = currentStaff;
+    }
 }
