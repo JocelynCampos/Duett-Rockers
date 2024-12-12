@@ -5,7 +5,7 @@ VALUES
 ('Kamran','Akbari','K-man','Glaciärvägen 15','80621','Malung','Sverige','akbarikamran4@gmail.com','Staff'),
 ('Erik','Edman','Rikki','Sicksackvägen 13','40232','Gävle','Sverige','erik.edman1996@gmail.com','Staff'),
 ('Hugo','Ransvi','Huggster','Blåbärsvägen 2','80212','Norrköping','Sverige','ho.ransvi@gmail.com','Staff'),
-('Jocleyn','Campos','Jocy','Köpmangatan 42','60452','Göteborg','Sverige','aracely.campos@hotmail.com','Staff'),
+('Jocelyn','Campos','Jocy','Köpmangatan 42','60452','Göteborg','Sverige','aracely.campos@hotmail.com','Staff'),
 ('Michael','Granbäck','Micke','Staketgatan 44','30150','Haparanda','Sverige','michael.granbäck@edugrade.se','Player'),
 ('Jessica','Niord','Jessie','Kungsgatan 40','86392','Uddevalla','Sverige','jessica.niord@edugrade.se','Player'),
 ('James','Gosling','Dr.Java','Lönngatan 7','08421','Stockholm','Sverige', 'gosling@java.com','Player'),

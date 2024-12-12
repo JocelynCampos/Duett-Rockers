@@ -1,14 +1,16 @@
 package org.example.duetrockers.entities;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "Person")
-public class Person {
 
-    public Person () {
+
+@Entity
+@Table(name = "Persons")
+public class Persons {
+
+    public Persons () {
         //Default
     }
-    public Person (String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email) {
+    public Persons (String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.nickname = nickname;
@@ -128,6 +130,4 @@ public class Person {
     public void setEmail(String email) {
         this.email = email;
     }
-
-
 }

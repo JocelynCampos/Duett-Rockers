@@ -1,7 +1,8 @@
 package org.example.duetrockers.DAO;
 
 import jakarta.persistence.criteria.From;
-import org.example.duetrockers.entities.Person;
+import org.example.duetrockers.entities.Persons;
+import org.example.duetrockers.entities.Persons;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,16 +15,16 @@ public class PersonDAO {
         this.session = session;
     }
 
-    public Person getPersonById (int id) {
-        return session.get(Person.class, id);
+    public Persons getPersonById (int id) {
+        return session.get(Persons.class, id);
     }
 
     public void showPersons () {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            List<Person> persons = session.createQuery("FROM Person", Person.class).list();
-            for (Person person : persons) {
+            List<Persons> persons = session.createQuery("FROM Person", Persons.class).list();
+            for (Persons person : persons) {
                 System.out.println(person); //Skriv ut varje person
             }
             transaction.commit();
@@ -34,18 +35,18 @@ public class PersonDAO {
         }
     }
 
-    public void savePerson (Person person) {
+    public void savePerson (Persons person) {
         session.persist(person);
     }
 
-    public void addPerson (Person person) {
+    public void addPerson (Persons person) {
         savePerson(person);
 
     }
 
     public void removePerson (int id) {
         Transaction transaction = session.beginTransaction();
-        Person person = session.get(Person.class, id);
+        Persons person = session.get(Persons.class, id);
         if (person != null) {
             session.remove(person);
         }
