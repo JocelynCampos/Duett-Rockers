@@ -1,10 +1,24 @@
 package org.example.duetrockers.entities;
 import jakarta.persistence.*;
-//Testkommentar
 
 @Entity
 @Table(name = "Person")
 public class Person {
+
+    public Person () {
+        //Default
+    }
+    public Person (String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickname = nickname;
+        this.street = street;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.email = email;
+    }
+
     @Id
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +47,10 @@ public class Person {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column (name = "Role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 
     private enum Role {
@@ -110,4 +128,6 @@ public class Person {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }
