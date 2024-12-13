@@ -14,22 +14,18 @@ public class Game
     @Column(name = "game_name", length = 100, nullable = false)
     private String gameName;
 
-    @Column(name = "min_players")
-    private int minPlayers;
-
-    @Column(name = "max_players")
-    private int maxPlayers;
+    @Column(name = "player_count")
+    private int playerCount;
 
     public Game()
     {
 
     }
 
-    public Game(String name, int minPlayers, int maxPlayers)
+    public Game(String name, int playerCount)
     {
         this.gameName = name;
-        this.minPlayers = minPlayers;
-        this.maxPlayers = maxPlayers;
+        this.playerCount = playerCount;
     }
 
     public int getId() {
@@ -48,19 +44,11 @@ public class Game
         this.gameName = gameName;
     }
 
-    public int getMinPlayers() {
-        return minPlayers;
+    public int getPlayerCount() {
+        return playerCount;
     }
 
-    public void setMinPlayers(int minPlayers) {
-        this.minPlayers = minPlayers;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
+    public void setPlayerCount(int playerCount) {
+        this.playerCount = playerCount;
     }
 }

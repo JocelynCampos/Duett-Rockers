@@ -1,5 +1,7 @@
 package org.example.duetrockers.DAO;
 
+public class PlayerDAO
+{
 import jakarta.persistence.*;
 import org.example.duetrockers.entities.Player;
 

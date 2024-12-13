@@ -1,5 +1,9 @@
 package org.example.duetrockers.DAO;
 
+
+public class TeamDAO
+{
+
 import jakarta.persistence.*;
 import org.example.duetrockers.entities.Team;
 import java.util.List;
