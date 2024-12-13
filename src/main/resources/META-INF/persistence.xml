@@ -18,8 +18,7 @@
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
 
-                      value="PassWord"/>
-
+                      value="Glöm inte ta bort ditt lösen!!"/>
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 

@@ -6,8 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.duetrockers.DAO.GameDAO;
-import org.example.duetrockers.DAO.MatchPlayerDAO;
-import org.example.duetrockers.DAO.PlayerDAO;
+
+import org.example.duetrockers.DAO.MatchTeamDAO;
 import org.example.duetrockers.entities.Game;
 import org.example.duetrockers.entities.Match;
 import org.example.duetrockers.entities.Player;
@@ -42,3 +42,63 @@ public class HelloApplication extends Application {
     public static void main(String[] args) {
         launch();
     }
+  
+    private void testDatabase()
+    {
+        Game game = new Game("Chess", 2, 2);
+        GameDAO dao = new GameDAO();
+        MatchTeamDAO matchTeamDAO = new MatchTeamDAO();
+
+        if(dao.saveGame(game))
+        {
+            System.out.println("Game saved");
+        }
+        else
+        {
+            System.out.println("Game not saved");
+        }
+
+        Game testGame = dao.getGameByID(1);
+
+        System.out.println("Game fetched: " +testGame.getGameName()+"\nId: "+testGame.getId());
+
+        Game testGame2 = new Game("League of Legends", 10, 10);
+
+        if(dao.saveGame(testGame2))
+        {
+            System.out.println("Game saved");
+        }
+        else
+        {
+            System.out.println("Game not saved");
+        }
+
+        List<Game> games = dao.getAllGames();
+
+        for(Game g : games)
+        {
+            System.out.println("Game name: "+g.getGameName()+"\nId: "+g.getId());
+        }
+
+        game.setMaxPlayers(3);
+
+        if(dao.updateGame(game))
+        {
+            System.out.println("Game updated");
+        }
+
+        System.out.println("Max players: "+game.getMaxPlayers());
+
+        if(dao.deleteGame(game))
+        {
+            System.out.println("Game deleted");
+        }
+
+        games = dao.getAllGames();
+
+        for(Game g : games)
+        {
+            System.out.println("Game name: "+g.getGameName()+"\nId: "+g.getId());
+        }
+    }
+}

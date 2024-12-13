@@ -1,6 +1,5 @@
 package org.example.duetrockers.entities;
 import jakarta.persistence.*;
-//Testkommentar
 
 @Entity
 @Table(name = "Persons")
