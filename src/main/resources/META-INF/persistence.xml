@@ -7,6 +7,7 @@
         <class>org.example.duetrockers.entities.Person</class>
         <class>org.example.duetrockers.entities.Staff</class>
 
+
         <properties>
             <!-- mySQL -->
             <property name="jakarta.persistence.jdbc.url"
@@ -16,7 +17,9 @@
             <property name="jakarta.persistence.jdbc.user"
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="my_password_1234"/>
+
+                      value="PassWord"/>
+
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
