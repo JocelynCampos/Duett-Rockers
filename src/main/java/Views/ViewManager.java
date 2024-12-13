@@ -26,14 +26,44 @@ public class ViewManager
         switch (type)
         {
             case START_MENU:
-                ViewStartMenu menu = new ViewStartMenu(width, height, this);
+                ViewStartMenu menuView = new ViewStartMenu(width, height, this);
                 previousView = currentView;
-                currentView = menu;
+                currentView = menuView;
                 break;
             case MAIN_APP:
-                ViewMainApp mainApp = new ViewMainApp(width, height, this);
+                ViewMainApp mainAppView = new ViewMainApp(width, height, this);
                 previousView = currentView;
-                currentView = mainApp;
+                currentView = mainAppView;
+                break;
+            case GAMES:
+                ViewGames gamesView = new ViewGames(width, height, this);
+                previousView = currentView;
+                currentView = gamesView;
+                break;
+            case PLAYERS:
+                ViewPlayers playersView = new ViewPlayers(width, height, this);
+                previousView = currentView;
+                currentView = playersView;
+                break;
+            case PLAYER_MATCHES:
+                ViewPlayerMatches playerMatchesView = new ViewPlayerMatches(width, height, this);
+                previousView = currentView;
+                currentView = playerMatchesView;
+                break;
+            case STAFF:
+                ViewStaff staffView = new ViewStaff(width, height, this);
+                previousView = currentView;
+                currentView = staffView;
+                break;
+            case TEAMS:
+                ViewTeams teamsView = new ViewTeams(width, height, this);
+                previousView = currentView;
+                currentView = teamsView;
+                break;
+            case TEAM_MATCHES:
+                ViewTeamMatches teamMatchesView = new ViewTeamMatches(width, height, this);
+                previousView = currentView;
+                currentView = teamMatchesView;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid view type");
@@ -51,7 +81,13 @@ public class ViewManager
     public enum ViewType
     {
         START_MENU,
-        MAIN_APP
+        MAIN_APP,
+        GAMES,
+        PLAYERS,
+        PLAYER_MATCHES,
+        STAFF,
+        TEAMS,
+        TEAM_MATCHES
     }
 
     public String getCurrentStaff()

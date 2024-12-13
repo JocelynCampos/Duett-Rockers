@@ -59,7 +59,7 @@ public class GameDAO
     {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Game> listToReturn = new ArrayList<>();
-        TypedQuery<Game> query = em.createQuery("FROM Game", Game.class);
+        TypedQuery<Game> query = em.createQuery("FROM Game g", Game.class);
         listToReturn.addAll(query.getResultList());
         return listToReturn;
     }

@@ -5,10 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Font;
-import org.example.duetrockers.DAO.PersonDAO;
-import org.example.duetrockers.DAO.StaffDAO;
-import org.example.duetrockers.entities.Person;
-import org.example.duetrockers.entities.Staff;
+import org.example.duetrockers.DAO.*;
+import org.example.duetrockers.entities.*;
 
 import java.util.List;
 
@@ -26,9 +24,13 @@ public class ViewMainApp extends View
 
     private ListView<String> dataList;
 
+    private ViewManager.ViewType currentTable;
+
     public ViewMainApp(int width, int height, ViewManager manager)
     {
         super(width, height, manager);
+
+        currentTable = null;
     }
 
     @Override
@@ -61,6 +63,22 @@ public class ViewMainApp extends View
         exit.setLayoutX((width / 2 - exit.getPrefWidth() / 2)+ 150);
         exit.setLayoutY((height / 5 - exit.getPrefHeight() / 2) + (BUTTON_HEIGHT * 5) + 40);
 
+        add.setOnAction(e->{
+
+            if(tableList.getSelectionModel().selectedItemProperty() != null && currentTable != null)
+            {
+                manager.switchView(currentTable);
+            }
+        });
+
+        update.setOnAction(e->
+        {
+            if(tableList.getSelectionModel().selectedItemProperty() != null && currentTable != null)
+            {
+                manager.switchView(currentTable);
+            }
+        });
+
         returnButton.setOnAction(e -> {
            manager.switchToPreviousView();
         });
@@ -81,7 +99,6 @@ public class ViewMainApp extends View
         tableList.setLayoutX(width / 8 - tableList.getPrefWidth() / 2);
         tableList.setLayoutY(height / 8 - tableList.getPrefHeight() / 2);
 
-        tableList.getItems().addAll("Persons");
         tableList.getItems().addAll("Staff");
         tableList.getItems().addAll("Games");
         tableList.getItems().addAll("Players");
@@ -104,35 +121,30 @@ public class ViewMainApp extends View
 
                 switch(newValue)
                 {
-                    case "Persons":
-                        addPersonsToDataList();
-                        break;
                     case "Staff":
+                        currentTable = ViewManager.ViewType.STAFF;
                         addStaffToDataList();
+                        break;
+                    case "Games":
+                        currentTable = ViewManager.ViewType.GAMES;
+                        addGamesToDataList();
+                        break;
+                    case "Players":
+                        currentTable = ViewManager.ViewType.PLAYERS;
+                        addPlayersToDataList();
+                        break;
+                    case "Teams":
+                        currentTable = ViewManager.ViewType.TEAMS;
+                        addTeamsToDataList();
                         break;
                 }
             }
 
         });
 
-
-
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
 
         root.getChildren().addAll(add, update, returnButton, exit, staffLabel, delete, tableList, dataList);
-    }
-
-    private void addPersonsToDataList()
-    {
-        PersonDAO personDAO = new PersonDAO();
-        List<Person> persons = personDAO.getAllPersons();
-
-        for(Person person : persons)
-        {
-            dataList.getItems().add(person.getFirstName() + " " + person.getLastName());
-        }
-
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
     }
 
     private void addStaffToDataList()
@@ -148,4 +160,42 @@ public class ViewMainApp extends View
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
     }
 
+    private void addGamesToDataList()
+    {
+        GameDAO gameDAO = new GameDAO();
+        List<Game> gameList = gameDAO.getAllGames();
+
+        for(Game game: gameList)
+        {
+            dataList.getItems().add(game.getGameName());
+        }
+
+        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
+    }
+
+    private void addPlayersToDataList()
+    {
+        PlayerDAO playerDAO = new PlayerDAO();
+        List<Player> playerList = playerDAO.getAllPlayers();
+
+        for(Player player : playerList)
+        {
+            dataList.getItems().add(player.getNickname());
+        }
+
+        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
+    }
+
+    private void addTeamsToDataList()
+    {
+        TeamDAO teamDAO = new TeamDAO();
+        List<Team> teamList = teamDAO.getAllTeams();
+
+        for(Team team : teamList)
+        {
+            dataList.getItems().add(team.getTeamName());
+        }
+
+        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
+    }
 }
