@@ -12,7 +12,7 @@ public class MatchTeamDAO {
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
     //Create
-    public boolean saveMatchTeam (MatchTeam matchTeam) {
+    public boolean saveMatchTeam(MatchTeam matchTeam) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -28,20 +28,20 @@ public class MatchTeamDAO {
             }
             return false;
         } finally {
-                entityManager.close();
+            entityManager.close();
         }
     }
 
     //Read ONE
-    public MatchTeam getMatchTeamById (int id) {
+    public MatchTeam getMatchTeamById(int id) {
 
         try (EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager()) {
             return entityManager.find(MatchTeam.class, id);
         }
     }
 
-     //Read ALL
-    public List <MatchTeam> getAllMatchTeams () {
+    //Read ALL
+    public List<MatchTeam> getAllMatchTeams() {
         try (EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager()) {
             return entityManager.createQuery("FROM MatchTeam", MatchTeam.class).getResultList();
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class MatchTeamDAO {
     }
 
     //Update
-    public boolean updateMatchTeam (MatchTeam matchTeam) {
+    public boolean updateMatchTeam(MatchTeam matchTeam) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -72,7 +72,7 @@ public class MatchTeamDAO {
     }
 
     //Delete
-    public boolean deleteMatchTeam (int id) {
+    public boolean deleteMatchTeam(int id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -84,17 +84,19 @@ public class MatchTeamDAO {
                 entityManager.remove(matchTeam);
                 transaction.commit(); //Tar då bort
                 return true;
-        } else { //om objektet inte hittades
-            System.out.println("Match with ID " + id + " not found.");
-            transaction.rollback(); //återgå
-        }
-    } catch (Exception e) {
-        if (transaction != null && transaction.isActive()) {
-            transaction.rollback();
-        }
-        System.out.println(e.getMessage());
-    } finally {
-        entityManager.close();
+            } else { //om objektet inte hittades
+                System.out.println("Match with ID " + id + " not found.");
+                transaction.rollback(); //återgå
+            }
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            System.out.println(e.getMessage());
+        } finally {
+            entityManager.close();
         }
         return false;
+
     }
+}
