@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.duetrockers.DAO.GameDAO;
+import org.example.duetrockers.DAO.MatchTeamDAO;
 import org.example.duetrockers.entities.Game;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class HelloApplication extends Application {
     {
         Game game = new Game("Chess", 2, 2);
         GameDAO dao = new GameDAO();
+        MatchTeamDAO matchTeamDAO = new MatchTeamDAO();
 
         if(dao.saveGame(game))
         {
