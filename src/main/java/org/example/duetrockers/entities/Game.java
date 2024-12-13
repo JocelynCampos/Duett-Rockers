@@ -11,11 +11,11 @@ public class Game
     @Column(name = "id")
     private int id;
 
-    @Column(name = "game_name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, nullable = false)
     private String gameName;
 
     @Column(name = "player_count")
-    private int playerCount;
+    private Integer playerCount;
 
     public Game()
     {
@@ -44,11 +44,11 @@ public class Game
         this.gameName = gameName;
     }
 
-    public int getPlayerCount() {
+    public Integer getPlayerCount() {
         return playerCount;
     }
 
-    public void setPlayerCount(int playerCount) {
+    public void setPlayerCount(Integer playerCount) {
         this.playerCount = playerCount;
     }
 }
