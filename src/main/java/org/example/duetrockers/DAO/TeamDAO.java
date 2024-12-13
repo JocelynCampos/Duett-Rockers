@@ -1,4 +1,5 @@
 package org.example.duetrockers.DAO;
 
-public class TeamDAO {
+public class TeamDAO
+{
 }

@@ -4,6 +4,8 @@
              version="2.0">
 
     <persistence-unit name="myconfig">
+        <class>org.example.duetrockers.entities.Person</class>
+        <class>org.example.duetrockers.entities.Staff</class>
 
         <properties>
             <!-- mySQL -->
@@ -14,13 +16,12 @@
             <property name="jakarta.persistence.jdbc.user"
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="INSERT_YOUR_MYSQL_PASSWORD_HERE"/>
+                      value="my_password_1234"/>
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
             <!-- Automatic schema export -->
-            <property name="jakarta.persistence.schema-generation.database.action"
-                      value="drop-and-create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
 
             <!-- SQL statement logging -->
             <property name="hibernate.show_sql" value="true"/>
