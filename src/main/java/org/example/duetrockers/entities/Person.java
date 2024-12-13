@@ -2,10 +2,9 @@ package org.example.duetrockers.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Person")
+@Table(name = "Persons")
 public class Person {
     @Id
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -32,6 +31,23 @@ public class Person {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    public Person()
+    {
+
+    }
+
+    public Person(String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email)
+    {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickname = nickname;
+        this.street = street;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.email = email;
+    }
 
 
     private enum Role {

@@ -6,9 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.duetrockers.DAO.GameDAO;
+
 import org.example.duetrockers.DAO.MatchTeamDAO;
 import org.example.duetrockers.entities.Game;
-
+import org.example.duetrockers.entities.Match;
+import org.example.duetrockers.entities.Player;
+import org.example.duetrockers.entities.MatchPlayer;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,8 +23,7 @@ public class HelloApplication extends Application {
     private ViewManager manager;
 
     @Override
-    public void start(Stage stage) throws IOException
-    {
+    public void start(Stage stage) throws IOException {
         manager = new ViewManager(stage, HEIGHT, WIDTH);
 
         manager.switchView(ViewManager.ViewType.START_MENU);
@@ -32,17 +34,15 @@ public class HelloApplication extends Application {
     }
 
     @Override
-    public void stop() throws Exception
-    {
+    public void stop() throws Exception {
         System.out.println("Shutting down...");
         super.stop();
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         launch();
     }
-
+  
     private void testDatabase()
     {
         Game game = new Game("Chess", 2, 2);
