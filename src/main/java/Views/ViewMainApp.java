@@ -1,13 +1,13 @@
 package Views;
 
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Font;
 import org.example.duetrockers.DAO.*;
 import org.example.duetrockers.entities.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class ViewMainApp extends View
@@ -24,7 +24,11 @@ public class ViewMainApp extends View
 
     private ListView<String> dataList;
 
+    private TableView<MatchPlayer> playerMatchTable;
+    private TableView<MatchTeam> teamMatchTable;
+
     private ViewManager.ViewType currentTable;
+
 
     public ViewMainApp(int width, int height, ViewManager manager)
     {
@@ -122,20 +126,46 @@ public class ViewMainApp extends View
                 switch(newValue)
                 {
                     case "Staff":
+                        dataList.setVisible(true);
+                        teamMatchTable.setVisible(false);
+                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.STAFF;
                         addStaffToDataList();
                         break;
                     case "Games":
+                        dataList.setVisible(true);
+                        teamMatchTable.setVisible(false);
+                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.GAMES;
                         addGamesToDataList();
                         break;
                     case "Players":
+                        dataList.setVisible(true);
+                        teamMatchTable.setVisible(false);
+                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.PLAYERS;
                         addPlayersToDataList();
                         break;
                     case "Teams":
+                        dataList.setVisible(true);
+                        teamMatchTable.setVisible(false);
+                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.TEAMS;
                         addTeamsToDataList();
+                        break;
+                    case "Team vs Team-matches":
+                        dataList.setVisible(false);
+                        teamMatchTable.setVisible(true);
+                        playerMatchTable.setVisible(false);
+                        currentTable = ViewManager.ViewType.TEAM_MATCHES;
+                        addTeamMatchesToTableView();
+                        break;
+                    case "Player vs Player-matches":
+                        dataList.setVisible(false);
+                        playerMatchTable.setVisible(true);
+                        teamMatchTable.setVisible(false);
+                        currentTable = ViewManager.ViewType.PLAYER_MATCHES;
+                        addPlayerMatchesToTableView();
                         break;
                 }
             }
@@ -144,7 +174,35 @@ public class ViewMainApp extends View
 
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
 
-        root.getChildren().addAll(add, update, returnButton, exit, staffLabel, delete, tableList, dataList);
+        playerMatchTable = new TableView<>();
+        teamMatchTable = new TableView<>();
+
+        playerMatchTable.setLayoutX(dataList.getLayoutX() - 50);
+        playerMatchTable.setLayoutY(dataList.getLayoutY() - 40);
+
+        teamMatchTable.setLayoutX(dataList.getLayoutX() - 50);
+        teamMatchTable.setLayoutY(dataList.getLayoutY() - 40);
+
+        //Define columns for playerMatchTable
+        TableColumn<MatchPlayer, String> gameColumn = new TableColumn<>("Game");
+        gameColumn.setCellValueFactory(new PropertyValueFactory<>("game_id"));
+
+        TableColumn<MatchPlayer, String> playerOneColumn = new TableColumn<>("Player One");
+        playerOneColumn.setCellValueFactory(new PropertyValueFactory<>("player1_id"));
+
+        TableColumn<MatchPlayer, String> playerTwoColumn = new TableColumn<>("Player Two");
+        playerTwoColumn.setCellValueFactory(new PropertyValueFactory<>("player2_id"));
+
+        TableColumn<MatchPlayer, String> winnerColumn = new TableColumn<>("Winner");
+        winnerColumn.setCellValueFactory(new PropertyValueFactory<>("winner_id"));
+
+        //Add columns for playerMatchTable
+        playerMatchTable.getColumns().addAll(gameColumn, playerOneColumn, playerTwoColumn, winnerColumn);
+
+        playerMatchTable.setVisible(false);
+        teamMatchTable.setVisible(false);
+
+        root.getChildren().addAll(add, update, returnButton, exit, staffLabel, delete, tableList, dataList, playerMatchTable, teamMatchTable);
     }
 
     private void addStaffToDataList()
@@ -180,7 +238,7 @@ public class ViewMainApp extends View
 
         for(Player player : playerList)
         {
-            dataList.getItems().add(player.getNickname());
+            dataList.getItems().add(player.getPerson().getNickname());
         }
 
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
@@ -197,5 +255,15 @@ public class ViewMainApp extends View
         }
 
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
+    }
+
+    private void addTeamMatchesToTableView()
+    {
+
+    }
+
+    private void addPlayerMatchesToTableView()
+    {
+
     }
 }

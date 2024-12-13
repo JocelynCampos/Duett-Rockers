@@ -49,7 +49,8 @@ public class PlayerDAO
     public List<Player> getAllPlayers(){
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Player> listToReturn = new ArrayList<>();
-        TypedQuery<Player> query = em.createQuery("From Player", Player.class);
+        TypedQuery<Player> query = em.createQuery("From Player p", Player.class);
+        listToReturn.addAll(query.getResultList());
         em.close();
         return listToReturn;
     }
