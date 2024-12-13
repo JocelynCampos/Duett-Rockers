@@ -1,14 +1,14 @@
 package org.example.duetrockers.DAO;
 
-public class PlayerDAO
-{
+import jakarta.persistence.Persistence;
 import jakarta.persistence.*;
 import org.example.duetrockers.entities.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerDAO {
+public class PlayerDAO
+{
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
@@ -21,7 +21,7 @@ public class PlayerDAO {
 
         try {
             transaction = em.getTransaction();
-            transaction.begin ();
+            transaction.begin();
             em.persist(player);
             transaction.commit();
             result = true;
