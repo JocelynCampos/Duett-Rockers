@@ -1,6 +1,5 @@
 package org.example.duetrockers.DAO;
 
-
 import jakarta.persistence.*;
 import org.example.duetrockers.entities.MatchPlayer;
 
