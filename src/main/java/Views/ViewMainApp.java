@@ -173,18 +173,21 @@ public class ViewMainApp extends View
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
     }
 
-    private void addPlayersToDataList()
-    {
+    private void addPlayersToDataList() {
         PlayerDAO playerDAO = new PlayerDAO();
         List<Player> playerList = playerDAO.getAllPlayers();
 
-        for(Player player : playerList)
-        {
-            dataList.getItems().add(player.getNickname());
+        for (Player player : playerList) {
+            Person person = player.getPerson(); // Hämta kopplad Person
+            if (person != null) {
+                dataList.getItems().add(person.getNickname());
+            }
         }
 
         dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
     }
+
+
 
     private void addTeamsToDataList()
     {
