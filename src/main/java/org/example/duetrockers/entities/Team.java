@@ -13,7 +13,7 @@ public class Team {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column (name = "team_name", unique = true, nullable = false)
+    @Column (name = "name", unique = true, nullable = false)
     private String teamName;
 
     @OneToMany (mappedBy = "team",cascade = CascadeType.ALL)

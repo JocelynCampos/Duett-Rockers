@@ -32,6 +32,19 @@ public class MatchTeam {
     @JoinColumn(name = "winner_id")
     private Team winner;
 
+
+    public MatchTeam() {
+        //Default konstruktorn
+    }
+
+    public MatchTeam (Game game, Team team1, Team team2, LocalDateTime matchDate) {
+    this.game = game;
+    this.team1 = team1;
+    this.team2 = team2;
+    this.matchDate = matchDate;
+    this.completed = false;
+    }
+
     public int getId() {
         return id;
     }
@@ -86,5 +99,18 @@ public class MatchTeam {
 
     public void setWinner(Team winner) {
         this.winner = winner;
+    }
+
+    @Override
+    public String toString() {
+        return "MatchTeam{" +
+                "id=" + id +
+                ", game=" + game +
+                ", team1=" + team1 +
+                ", team2=" + team2 +
+                ", matchDate=" + matchDate +
+                ", completed=" + completed +
+                ", winner=" + winner +
+                '}';
     }
 }
