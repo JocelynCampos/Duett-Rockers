@@ -10,6 +10,7 @@ public class ViewTeamMatches extends View
     @Override
     protected void initializeView()
     {
+        //TESTKOMMENTAR. Ser ej branch på github
 
     }
 }
