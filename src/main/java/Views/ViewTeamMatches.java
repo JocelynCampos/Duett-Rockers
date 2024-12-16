@@ -13,29 +13,29 @@ import java.util.List;
 
 public class ViewTeamMatches extends View {
 
-    private ListView <String> teamListView;
+    private ListView<String> teamListView;
     private Button addButton, updateButton, deleteButton, returnButton;
     private ListView<String> availableTeamsListView;
     private ListView<String> selectedTeamsListView;
     private TextField searchField;
     private Button selectTeam1Button, getSelectTeam2Button;
-    private MatchTeam Team1, Team2;
+    private Team Team1, Team2;
 
+    private MatchTeamDAO matchTeamDAO;
+    private TeamDAO teamDAO;
 
-    public ViewTeamMatches(int width, int height, ViewManager manager)
-    {
+    public ViewTeamMatches(int width, int height, ViewManager manager) {
         super(width, height, manager);
     }
 
-    private MatchTeamDAO matchTeamDAO;
 
     @Override
-    protected void initializeView()
-    {
+    protected void initializeView() {
         root = new AnchorPane();
 
 
         matchTeamDAO = new MatchTeamDAO();
+        teamDAO = new TeamDAO();
 
         Label titleLabel = new Label("Team Matches");
         titleLabel.setFont(new Font(24));
@@ -51,9 +51,38 @@ public class ViewTeamMatches extends View {
         HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton);
 
 
-        //addButton.setOnAction();
-        //updateButton.setOnAction();
-        //deleteButton.setOnAction();
+        addButton.setOnAction(e -> {
+            if (Team1 != null && Team2 != null) {
+                MatchTeam newMatch = new MatchTeam();
+                newMatch.setTeam1(Team1);
+                newMatch.setTeam2(Team2);
+                matchTeamDAO.addMatchTeam(newMatch);
+
+                teamListView.getItems().add(Team1.getTeamName() + " vs " + Team2.getTeamName());
+                Team1 = null;
+                Team2 = null;
+                selectedTeamsListView.getItems().clear();
+            }
+
+        });
+        updateButton.setOnAction(e -> {
+            String selectedMatch = teamListView.getSelectionModel().getSelectedItem();
+            if (selectedMatch != null) {
+
+            }
+        });
+
+
+
+
+        deleteButton.setOnAction(e -> {
+            String selectecMatch = teamListView.getSelectionModel().getSelectedItem();
+            if (selectecMatch != null) {
+                teamListView.getItems().remove(selectecMatch);
+            }
+        });
+
+
         returnButton.setOnAction(e -> manager.switchToPreviousView());
 
 
@@ -87,13 +116,22 @@ public class ViewTeamMatches extends View {
         }
     }
 
-    private void addTeam1 () {
-
+    private void selectTeam() {
+        availableTeamsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                if (Team1 == null) {
+                    Team1 = teamDAO.getTeamByName(newValue);
+                } else if (Team2 == null) {
+                    Team2 = teamDAO.getTeamByName(newValue);
+                }
+                availableTeamsListView.getItems().remove(newValue);
+            }
+        });
     }
 
-    private void addTeam2() {
-
-
+    private void addMatchTeam() {
+        for ()
     }
-
 }
+
+
