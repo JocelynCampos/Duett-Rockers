@@ -18,7 +18,7 @@
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
 
-                      value="Edugrade2024"/>
+                      value="PASSWORD HERE"/>
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
