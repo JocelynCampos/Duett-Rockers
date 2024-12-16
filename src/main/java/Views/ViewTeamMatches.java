@@ -1,6 +1,7 @@
 package Views;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -30,15 +31,14 @@ public class ViewTeamMatches extends View {
 
     public ViewTeamMatches(int width, int height, ViewManager manager) {
         super(width, height, manager);
+        matchTeamDAO = new MatchTeamDAO();
+        teamDAO = new TeamDAO();
+        initializeView();
     }
-
 
     @Override
     protected void initializeView() {
         root = new AnchorPane();
-
-        matchTeamDAO = new MatchTeamDAO();
-        teamDAO = new TeamDAO();
 
         //Skapa titel
         Label titleLabel = new Label("Team Matches");
@@ -56,11 +56,8 @@ public class ViewTeamMatches extends View {
 
         //Ladda data
         loadAvailableTeams();
-
-        selectTeam();
-
         loadTeamMatches();
-
+        selectTeam();
 
         HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton);
 
@@ -70,15 +67,67 @@ public class ViewTeamMatches extends View {
         returnButton.setOnAction(e -> manager.switchToPreviousView());
 
 
-        root.getChildren().addAll(titleLabel, teamListView, buttonBox);
+        root.getChildren().addAll(titleLabel, availableTeamsListView, teamListView, buttonBox);
 
         titleLabel.setLayoutX(20);
         titleLabel.setLayoutY(20);
 
-        teamListView.setLayoutX(20);
-        teamListView.setLayoutY(60);
+        availableTeamsListView.setLayoutX(20);
+        availableTeamsListView.setLayoutY(100);
+        availableTeamsListView.setPrefSize(200,300);
 
+        teamListView.setLayoutX(250);
+        teamListView.setLayoutY(100);
+        teamListView.setPrefSize(300,300);
 
+        buttonBox.setLayoutX(20);
+        buttonBox.setLayoutY(420);
+
+        VBox form = createForm();
+        form.setLayoutX(600);
+        form.setLayoutY(100);
+        root.getChildren().add(form);
+    }
+
+    private VBox createForm() {
+        VBox formBox = new VBox(15);
+
+        Label formTitle = new Label("Select Teams for Match");
+        formTitle.setFont(new Font(20));
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+
+        //Formulär Team1
+        Label teamOneLabel = new Label("Team One: ");
+        ComboBox<String> teamOneCombobox = new ComboBox<>();
+        teamOneCombobox.getItems().addAll(availableTeamsListView.getItems());
+        teamOneCombobox.setOnAction(e -> {
+            String selectedTeam = teamOneCombobox.getValue();
+            if (selectedTeam != null) {
+                Team1 = teamDAO.getTeamByName(selectedTeam);
+            }
+        });
+
+        //Formulär Team2
+        Label teamTwoLabel = new Label("Team Two: ");
+        ComboBox<String> teamTwoCombobox = new ComboBox<>();
+        teamTwoCombobox.getItems().addAll(availableTeamsListView.getItems());
+        teamTwoCombobox.setOnAction(e -> {
+            String selectedTeam = teamTwoCombobox.getValue();
+            if (selectedTeam != null) {
+                Team2 = teamDAO.getTeamByName(selectedTeam);
+            }
+        });
+
+        gridPane.add(teamOneLabel,0,0);
+        gridPane.add(teamOneCombobox,1,0);
+        gridPane.add(teamTwoLabel,0,1);
+        gridPane.add(teamTwoCombobox,1,1);
+
+        formBox.getChildren().addAll(formTitle,gridPane);
+        return formBox;
     }
 
     private void loadTeamMatches() {
