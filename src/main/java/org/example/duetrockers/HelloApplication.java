@@ -40,11 +40,12 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+
         launch();
     }
-  
-    private void testDatabase()
-    {
 
+    private void testDatabase() {
     }
 }
+
+
