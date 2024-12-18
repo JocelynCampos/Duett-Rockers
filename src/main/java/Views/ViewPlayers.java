@@ -374,6 +374,4 @@ public class ViewPlayers extends View {
         // Uppdatera spelarlistan i GUI
         refreshPlayerList();
     }
-
-
 }
