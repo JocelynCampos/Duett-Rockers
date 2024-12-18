@@ -2,34 +2,36 @@ package org.example.duetrockers.entities;
 
 import jakarta.persistence.*;
 
+import static jakarta.persistence.FetchType.EAGER;
+
 @Entity
 @Table (name = "players")
 public class Player{
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column (name = "player_id")
+    @Column(name = "person_id")
     private int id;
 
-    @Column (name = "first_name", length = 100, nullable = false)
-    private String firstName;
-
-    @Column (name = "last_name", length = 100, nullable = false)
-    private String lastName;
-
-    @Column (name = "nickname", length = 100, unique = true, nullable = false)
-    private String nickname;
+    @OneToOne(optional = false, fetch = EAGER, cascade = CascadeType.ALL)
+    @MapsId
+    private Person person;
 
     @ManyToOne
     @JoinColumn (name = "team_id")
     private Team team;
 
+    public Player()
+    {
 
+    }
 
-
+    public Player(Person person, Team team)
+    {
+        this.person = person;
+        this.team = team;
+    }
 
     //getter och setters
-
 
     public int getId() {
         return id;
@@ -39,28 +41,12 @@ public class Player{
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public Team getTeam() {
@@ -69,5 +55,15 @@ public class Player{
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public String getNickname()
+    {
+        return person.getNickname();
+    }
+
+    public void setNickname(String newNickname)
+    {
+        person.setNickname(newNickname);
     }
 }

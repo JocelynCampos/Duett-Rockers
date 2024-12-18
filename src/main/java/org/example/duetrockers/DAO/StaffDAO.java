@@ -27,7 +27,7 @@ public class StaffDAO
             {
                 transaction = em.getTransaction();
                 transaction.begin();
-                em.persist(staff);
+                em.merge(staff);
                 transaction.commit();
                 result = true;
             }

@@ -86,7 +86,6 @@ public class MatchTeamDAO {
                 return true;
             } else { //om objektet inte hittades
                 System.out.println("Match with ID " + id + " not found.");
-                transaction.rollback(); //återgå
             }
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
