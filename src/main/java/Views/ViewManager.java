@@ -2,6 +2,7 @@ package Views;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.duetrockers.entities.Staff;
 
 public class ViewManager
 {

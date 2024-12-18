@@ -228,6 +228,3 @@ public class ViewTeamMatches extends View {
             alert.showAndWait();
         }
     }
-}
-
-

@@ -17,6 +17,7 @@ public class Game
     @Column(name = "player_count")
     private Integer playerCount;
 
+
     public Game()
     {
 
@@ -27,6 +28,7 @@ public class Game
         this.gameName = name;
         this.playerCount = playerCount;
     }
+
 
     public int getId() {
         return id;
@@ -51,4 +53,6 @@ public class Game
     public void setPlayerCount(Integer playerCount) {
         this.playerCount = playerCount;
     }
+
 }
+

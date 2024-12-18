@@ -23,6 +23,18 @@ public class Team {
     @JoinColumn (name= "game_id")
     private Game game;
 
+    public Team()
+    {
+
+    }
+
+    public Team(String teamName, Set<Player> players, Game game)
+    {
+        this.teamName = teamName;
+        this.players = players;
+        this.game = game;
+    }
+
     public int getId() {
         return id;
     }

@@ -114,5 +114,3 @@ public class MatchPlayerDAO {
         return result;
     }
 }
-
-
