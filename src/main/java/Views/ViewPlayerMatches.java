@@ -9,9 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.duetrockers.DAO.MatchPlayerDAO;
-import org.example.duetrockers.entities.MatchPlayer;
 import org.example.duetrockers.entities.Player;
 import org.example.duetrockers.entities.Match;
+import org.example.duetrockers.entities.MatchPlayer;
 
 import java.util.List;
 
@@ -232,3 +232,4 @@ public class ViewPlayerMatches extends View {
             System.out.println("Failed to delete MatchPlayer.");
         }
     }
+}

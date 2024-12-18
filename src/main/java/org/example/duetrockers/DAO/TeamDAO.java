@@ -119,21 +119,5 @@ public class TeamDAO {
 
         return result;
     }
-
-    public Team getTeamByName (String teamName) {
-        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Team team = null;
-
-        try {
-            team = em.createQuery("Select t FROM Team t WHERE t.teamName = :name", Team.class)
-                    .setParameter("name", teamName)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            System.out.println("No team found with name: " + teamName);
-        } finally {
-            em.close();
-        }
-        return team;
-    }
 }
 
