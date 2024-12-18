@@ -2,30 +2,56 @@ package org.example.duetrockers.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
+
 @Entity
-@Table (name = "match_players")
-
-public class MatchPlayer {
-
+@Table(name = "PlayerMatches")
+public class MatchPlayer
+{
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column(name = "match_player_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn (name = "match_id", nullable = false )
-    private Match match;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "player1_id", nullable = false)
+    private Player player1;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "player2_id", nullable = false)
+    private Player player2;
+
+    @Column(name = "match_date", nullable = false)
+    private LocalDateTime matchDate;
+
+    @Column(name = "completed", nullable = false)
+    private boolean completed = false;
 
     @ManyToOne
-    @JoinColumn (name = "player_id", nullable = false)
-    private Player player;
-
-    @Column(name = "score", nullable = false)
-    private int score;
+    @JoinColumn(name = "winner_id")
+    private Player winner;
 
 
-    //Getters och Setters
+    public MatchPlayer()
+    {
 
+    }
+
+    public MatchPlayer(Game game, Player player1, Player player2, LocalDateTime matchDate, boolean completed)
+    {
+        this.game = game;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.matchDate = matchDate;
+        this.completed = completed;
+    }
+
+
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -34,27 +60,52 @@ public class MatchPlayer {
         this.id = id;
     }
 
-    public Match getMatch() {
-        return match;
+    public Game getGame() {
+        return game;
     }
 
-    public void setMatch(Match match) {
-        this.match = match;
+    public void setGame(Game game) {
+        this.game = game;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Player getPlayer1() {
+        return player1;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
     }
 
-    public int getScore() {
-        return score;
+    public Player getPlayer2() {
+        return player2;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
     }
+
+    public LocalDateTime getMatchDate() {
+        return matchDate;
+    }
+
+    public void setMatchDate(LocalDateTime matchDate) {
+        this.matchDate = matchDate;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
+    }
+
 }

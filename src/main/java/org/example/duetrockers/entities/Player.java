@@ -13,13 +13,12 @@ public class Player{
     @Column(name = "person_id")
     private int id;
 
-    @OneToOne(optional = false, fetch = EAGER, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, fetch = EAGER)
     @MapsId
     @JoinColumn(name = "person_id")
     private Person person;
 
-    @ManyToOne
-    @MapsId
+    @ManyToOne(fetch = EAGER)
     @JoinColumn (name = "team_id")
     private Team team;
 
@@ -68,5 +67,11 @@ public class Player{
     public void setNickname(String newNickname)
     {
         person.setNickname(newNickname);
+    }
+
+    @Override
+    public String toString()
+    {
+        return person.getNickname();
     }
 }
