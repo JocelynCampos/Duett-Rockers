@@ -232,5 +232,3 @@ public class ViewPlayerMatches extends View {
             System.out.println("Failed to delete MatchPlayer.");
         }
     }
-}
-
