@@ -46,16 +46,19 @@ public class PlayerDAO
 
     }
 
-    public List<Player> getAllPlayers(){
+    public List<Player> getAllPlayers() {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Player> listToReturn = new ArrayList<>();
-        TypedQuery<Player> query = em.createQuery("From Player p", Player.class);
-        listToReturn.addAll(query.getResultList());
-        em.close();
-        return listToReturn;
+        try {
+            TypedQuery<Player> query = em.createQuery("FROM Player", Player.class);
+            listToReturn.addAll(query.getResultList()); // Lägg till resultat i listan
+        } catch (Exception e) {
+            System.out.println("Error fetching players: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+        return listToReturn; // Returnera den fyllda listan
     }
-
-
 
 // update
     public boolean updatePlayer(Player playerToUpdate) {

@@ -4,16 +4,18 @@ import jakarta.persistence.*;
 
 import static jakarta.persistence.FetchType.EAGER;
 
+
 @Entity
 @Table (name = "players")
 public class Player{
 
     @Id
-    @Column(name = "person_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
-    @OneToOne(optional = false, fetch = EAGER, cascade = CascadeType.ALL)
-    @MapsId
+    @OneToOne
+    @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
     @ManyToOne
