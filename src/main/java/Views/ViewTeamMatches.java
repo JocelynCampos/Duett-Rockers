@@ -24,21 +24,22 @@ public class ViewTeamMatches extends View {
     private TextField searchField;
     private Button selectTeam1Button, getSelectTeam2Button;
     private Team Team1, Team2;
-    private Map<String, Integer> matchIdMap = new HashMap<>();
+    private Map<String, Integer> matchIdMap;
 
     private MatchTeamDAO matchTeamDAO;
     private TeamDAO teamDAO;
 
     public ViewTeamMatches(int width, int height, ViewManager manager) {
         super(width, height, manager);
-        matchTeamDAO = new MatchTeamDAO();
-        teamDAO = new TeamDAO();
         initializeView();
     }
 
     @Override
     protected void initializeView() {
-        root = new AnchorPane();
+
+        matchTeamDAO = new MatchTeamDAO();
+        teamDAO = new TeamDAO();
+        matchIdMap = new HashMap<>();
 
         //Skapa titel
         Label titleLabel = new Label("Team Matches");
@@ -74,11 +75,11 @@ public class ViewTeamMatches extends View {
 
         availableTeamsListView.setLayoutX(20);
         availableTeamsListView.setLayoutY(100);
-        availableTeamsListView.setPrefSize(200,300);
+        availableTeamsListView.setPrefSize(200, 300);
 
         teamListView.setLayoutX(250);
         teamListView.setLayoutY(100);
-        teamListView.setPrefSize(300,300);
+        teamListView.setPrefSize(300, 300);
 
         buttonBox.setLayoutX(20);
         buttonBox.setLayoutY(420);
@@ -121,12 +122,12 @@ public class ViewTeamMatches extends View {
             }
         });
 
-        gridPane.add(teamOneLabel,0,0);
-        gridPane.add(teamOneCombobox,1,0);
-        gridPane.add(teamTwoLabel,0,1);
-        gridPane.add(teamTwoCombobox,1,1);
+        gridPane.add(teamOneLabel, 0, 0);
+        gridPane.add(teamOneCombobox, 1, 0);
+        gridPane.add(teamTwoLabel, 0, 1);
+        gridPane.add(teamTwoCombobox, 1, 1);
 
-        formBox.getChildren().addAll(formTitle,gridPane);
+        formBox.getChildren().addAll(formTitle, gridPane);
         return formBox;
     }
 
@@ -221,10 +222,12 @@ public class ViewTeamMatches extends View {
                 alert.setContentText("Could not find the selected match to delete");
                 alert.showAndWait();
             }
-        } else { Alert alert = new Alert(Alert.AlertType.WARNING);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error.");
             alert.setHeaderText(null);
             alert.setContentText("No match selected to delete.");
             alert.showAndWait();
         }
     }
+}
