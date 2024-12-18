@@ -4,6 +4,7 @@
              version="2.0">
 
     <persistence-unit name="myconfig">
+      
         <class>org.example.duetrockers.entities.Person</class>
         <class>org.example.duetrockers.entities.Staff</class>
         <class>org.example.duetrockers.entities.Game</class>
@@ -11,7 +12,6 @@
         <class>org.example.duetrockers.entities.MatchPlayer</class>
         <class>org.example.duetrockers.entities.Team</class>
         <class>org.example.duetrockers.entities.Player</class>
-
 
         <properties>
             <!-- mySQL -->
@@ -23,7 +23,6 @@
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
                       value="GLÖM INTE TA BORT LÖSENORD"/>
-
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
