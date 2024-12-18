@@ -7,7 +7,6 @@ import javafx.scene.text.Font;
 import org.example.duetrockers.DAO.*;
 import org.example.duetrockers.entities.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ViewMainApp extends View
@@ -16,16 +15,11 @@ public class ViewMainApp extends View
     private static final int BUTTON_HEIGHT = 60;
 
 
-    private Button add, update, returnButton, exit, delete;
+    private Button manage, returnButton, exit;
 
     private Label staffLabel;
 
     private ListView<String> tableList;
-
-    private ListView<String> dataList;
-
-    private TableView<MatchPlayer> playerMatchTable;
-    private TableView<MatchTeam> teamMatchTable;
 
     private ViewManager.ViewType currentTable;
 
@@ -40,43 +34,25 @@ public class ViewMainApp extends View
     @Override
     protected void initializeView()
     {
-        add = new Button("Add");
-        update = new Button("Update");
+        manage = new Button("Manage");
         returnButton = new Button("Return");
         exit = new Button("Exit");
-        delete = new Button("Delete");
 
-        add.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-        update.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+        manage.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         returnButton.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
         exit.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
-        delete.setPrefSize(BUTTON_WIDTH, BUTTON_HEIGHT);
 
-        add.setLayoutX((width / 2 - add.getPrefWidth() / 2) + 150);
-        add.setLayoutY((height / 5 - add.getPrefHeight() / 2) + BUTTON_HEIGHT);
-
-        update.setLayoutX((width / 2 - update.getPrefWidth() / 2)+ 150);
-        update.setLayoutY((height / 5 - update.getPrefHeight() / 2) + (BUTTON_HEIGHT * 2) + 10);
-
-        delete.setLayoutX((width / 2 - delete.getPrefWidth() / 2)+ 150);
-        delete.setLayoutY((height / 5 - delete.getPrefHeight() / 2) + (BUTTON_HEIGHT*3) + 20);
+        manage.setLayoutX((width / 2 - manage.getPrefWidth() / 2) + 150);
+        manage.setLayoutY((height / 6 - manage.getPrefHeight() / 2) + BUTTON_HEIGHT);
 
         returnButton.setLayoutX((width / 2 - returnButton.getPrefWidth() / 2)+ 150);
-        returnButton.setLayoutY((height / 5 - returnButton.getPrefHeight() / 2) + (BUTTON_HEIGHT * 4) + 30);
+        returnButton.setLayoutY((height / 6 - returnButton.getPrefHeight() / 2) + (BUTTON_HEIGHT * 2) + 10);
 
         exit.setLayoutX((width / 2 - exit.getPrefWidth() / 2)+ 150);
-        exit.setLayoutY((height / 5 - exit.getPrefHeight() / 2) + (BUTTON_HEIGHT * 5) + 40);
+        exit.setLayoutY((height / 6 - exit.getPrefHeight() / 2) + (BUTTON_HEIGHT * 3) + 20);
 
-        add.setOnAction(e->{
+        manage.setOnAction(e->{
 
-            if(tableList.getSelectionModel().selectedItemProperty() != null && currentTable != null)
-            {
-                manager.switchView(currentTable);
-            }
-        });
-
-        update.setOnAction(e->
-        {
             if(tableList.getSelectionModel().selectedItemProperty() != null && currentTable != null)
             {
                 manager.switchView(currentTable);
@@ -112,158 +88,36 @@ public class ViewMainApp extends View
 
         tableList.setPrefHeight(tableList.getItems().size() * 24 + 2);
 
-        dataList = new ListView();
-
-        dataList.setLayoutX(tableList.getLayoutX());
-        dataList.setLayoutY(tableList.getLayoutY() + 200);
-
         tableList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 
             if(newValue != null)
             {
-                dataList.getItems().clear();
 
                 switch(newValue)
                 {
                     case "Staff":
-                        dataList.setVisible(true);
-                        teamMatchTable.setVisible(false);
-                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.STAFF;
-                        addStaffToDataList();
                         break;
                     case "Games":
-                        dataList.setVisible(true);
-                        teamMatchTable.setVisible(false);
-                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.GAMES;
-                        addGamesToDataList();
                         break;
                     case "Players":
-                        dataList.setVisible(true);
-                        teamMatchTable.setVisible(false);
-                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.PLAYERS;
-                        addPlayersToDataList();
                         break;
                     case "Teams":
-                        dataList.setVisible(true);
-                        teamMatchTable.setVisible(false);
-                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.TEAMS;
-                        addTeamsToDataList();
                         break;
                     case "Team vs Team-matches":
-                        dataList.setVisible(false);
-                        teamMatchTable.setVisible(true);
-                        playerMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.TEAM_MATCHES;
-                        addTeamMatchesToTableView();
                         break;
                     case "Player vs Player-matches":
-                        dataList.setVisible(false);
-                        playerMatchTable.setVisible(true);
-                        teamMatchTable.setVisible(false);
                         currentTable = ViewManager.ViewType.PLAYER_MATCHES;
-                        addPlayerMatchesToTableView();
                         break;
                 }
             }
 
         });
 
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
-
-        playerMatchTable = new TableView<>();
-        teamMatchTable = new TableView<>();
-
-        playerMatchTable.setLayoutX(dataList.getLayoutX() - 50);
-        playerMatchTable.setLayoutY(dataList.getLayoutY() - 40);
-
-        teamMatchTable.setLayoutX(dataList.getLayoutX() - 50);
-        teamMatchTable.setLayoutY(dataList.getLayoutY() - 40);
-
-        //Define columns for playerMatchTable
-        TableColumn<MatchPlayer, String> gameColumn = new TableColumn<>("Game");
-        gameColumn.setCellValueFactory(new PropertyValueFactory<>("game_id"));
-
-        TableColumn<MatchPlayer, String> playerOneColumn = new TableColumn<>("Player One");
-        playerOneColumn.setCellValueFactory(new PropertyValueFactory<>("player1_id"));
-
-        TableColumn<MatchPlayer, String> playerTwoColumn = new TableColumn<>("Player Two");
-        playerTwoColumn.setCellValueFactory(new PropertyValueFactory<>("player2_id"));
-
-        TableColumn<MatchPlayer, String> winnerColumn = new TableColumn<>("Winner");
-        winnerColumn.setCellValueFactory(new PropertyValueFactory<>("winner_id"));
-
-        //Add columns for playerMatchTable
-        playerMatchTable.getColumns().addAll(gameColumn, playerOneColumn, playerTwoColumn, winnerColumn);
-
-        playerMatchTable.setVisible(false);
-        teamMatchTable.setVisible(false);
-
-        root.getChildren().addAll(add, update, returnButton, exit, staffLabel, delete, tableList, dataList, playerMatchTable, teamMatchTable);
-    }
-
-    private void addStaffToDataList()
-    {
-        StaffDAO staffDAO = new StaffDAO();
-        List<Staff> staffList = staffDAO.getAllStaff();
-
-        for(Staff staff : staffList)
-        {
-            dataList.getItems().add(staff.getPerson().getFirstName() + " " + staff.getPerson().getLastName());
-        }
-
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
-    }
-
-    private void addGamesToDataList()
-    {
-        GameDAO gameDAO = new GameDAO();
-        List<Game> gameList = gameDAO.getAllGames();
-
-        for(Game game: gameList)
-        {
-            dataList.getItems().add(game.getGameName());
-        }
-
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
-    }
-
-    private void addPlayersToDataList()
-    {
-        PlayerDAO playerDAO = new PlayerDAO();
-        List<Player> playerList = playerDAO.getAllPlayers();
-
-        for(Player player : playerList)
-        {
-            dataList.getItems().add(player.getPerson().getNickname());
-        }
-
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
-    }
-
-    private void addTeamsToDataList()
-    {
-        TeamDAO teamDAO = new TeamDAO();
-        List<Team> teamList = teamDAO.getAllTeams();
-
-        for(Team team : teamList)
-        {
-            dataList.getItems().add(team.getTeamName());
-        }
-
-        dataList.setPrefHeight(dataList.getItems().size() * 24 + 2);
-    }
-
-    private void addTeamMatchesToTableView()
-    {
-
-    }
-
-    private void addPlayerMatchesToTableView()
-    {
-
+        root.getChildren().addAll(manage, returnButton, exit, staffLabel, tableList);
     }
 }

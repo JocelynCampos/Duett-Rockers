@@ -9,11 +9,12 @@ import static jakarta.persistence.FetchType.EAGER;
 public class Staff
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "person_id")
     private int id;
 
     @OneToOne(optional = false, fetch = EAGER, cascade = CascadeType.ALL)
+    @MapsId
+    @JoinColumn(name = "person_id")
     private Person person;
 
     public Staff()
@@ -40,5 +41,11 @@ public class Staff
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    @Override
+    public String toString()
+    {
+        return person.getFirstName() + " " + person.getLastName();
     }
 }

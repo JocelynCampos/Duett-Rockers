@@ -56,4 +56,14 @@ public class Player{
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public String getNickname()
+    {
+        return person.getNickname();
+    }
+
+    public void setNickname(String newNickname)
+    {
+        person.setNickname(newNickname);
+    }
 }

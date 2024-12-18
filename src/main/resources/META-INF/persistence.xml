@@ -6,6 +6,11 @@
     <persistence-unit name="myconfig">
         <class>org.example.duetrockers.entities.Person</class>
         <class>org.example.duetrockers.entities.Staff</class>
+        <class>org.example.duetrockers.entities.Game</class>
+        <class>org.example.duetrockers.entities.MatchTeam</class>
+        <class>org.example.duetrockers.entities.MatchPlayer</class>
+        <class>org.example.duetrockers.entities.Team</class>
+        <class>org.example.duetrockers.entities.Player</class>
 
 
         <properties>
@@ -18,7 +23,7 @@
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
 
-                      value="password123"/>
+                      value="JagAlskarIdun3"/>
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
