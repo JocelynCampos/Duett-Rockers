@@ -24,6 +24,7 @@
             <property name="jakarta.persistence.jdbc.password"
                       value="GLÖM INTE TA BORT LÖSENORD"/>
 
+
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
             <!-- Automatic schema export -->
