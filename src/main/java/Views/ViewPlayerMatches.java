@@ -47,6 +47,10 @@ public class ViewPlayerMatches extends View {
     private boolean isCompleted;
     private MatchPlayer selectedMatchPlayer;
 
+
+    private Label gamesLabel, teamOneLabel, teamTwoLabel, playerOneLabel, playerTwoLabel, winnerLabel,
+        completedLabel, dateLabel, hourLabel, minuteLabel;
+
     public ViewPlayerMatches(int width, int height, ViewManager manager)
     {
 
@@ -89,11 +93,23 @@ public class ViewPlayerMatches extends View {
         returnButton = new Button("Return");
         updateButton = new Button("Update");
 
+        gamesLabel = new Label("Games:");
+        teamOneLabel = new Label("Team One:");
+        teamTwoLabel = new Label("Team Two:");
+        playerOneLabel = new Label("Player One:");
+        playerTwoLabel = new Label("Player Two:");
+        winnerLabel = new Label("Winner:");
+        completedLabel = new Label("Completed:");
+        dateLabel = new Label("Date:");
+        hourLabel = new Label("Hour:");
+        minuteLabel = new Label("Minute:");
+
         initTableView();
         refreshMatchPlayerList();
         initComboBoxes();
         initDatePicker();
         initButtons();
+        initLabels();
     }
 
     private void initTableView()
@@ -146,7 +162,7 @@ public class ViewPlayerMatches extends View {
     private void initComboBoxes()
     {
         games.setLayoutX(matchPlayerTable.getLayoutX());
-        games.setLayoutY(matchPlayerTable.getLayoutY() + 405);
+        games.setLayoutY(matchPlayerTable.getLayoutY() + 425);
 
         games.setOnAction(event -> {
            if(games.getSelectionModel().getSelectedItem() != null)
@@ -159,7 +175,7 @@ public class ViewPlayerMatches extends View {
         });
 
         teamOne.setLayoutX(matchPlayerTable.getLayoutX());
-        teamOne.setLayoutY(matchPlayerTable.getLayoutY() + 435);
+        teamOne.setLayoutY(matchPlayerTable.getLayoutY() + 470);
 
         teamOne.setOnAction(event -> {
 
@@ -170,7 +186,7 @@ public class ViewPlayerMatches extends View {
         });
 
         teamTwo.setLayoutX(matchPlayerTable.getLayoutX() + 155);
-        teamTwo.setLayoutY(matchPlayerTable.getLayoutY() + 435);
+        teamTwo.setLayoutY(matchPlayerTable.getLayoutY() + 470);
 
         teamTwo.setOnAction(event -> {
 
@@ -181,7 +197,7 @@ public class ViewPlayerMatches extends View {
         });
 
         playerOne.setLayoutX(matchPlayerTable.getLayoutX());
-        playerOne.setLayoutY(matchPlayerTable.getLayoutY() + 460);
+        playerOne.setLayoutY(matchPlayerTable.getLayoutY() + 520);
 
         playerOne.setOnAction(event -> {
 
@@ -193,7 +209,7 @@ public class ViewPlayerMatches extends View {
         });
 
         playerTwo.setLayoutX(matchPlayerTable.getLayoutX() + 155);
-        playerTwo.setLayoutY(matchPlayerTable.getLayoutY() + 460);
+        playerTwo.setLayoutY(matchPlayerTable.getLayoutY() + 520);
 
         playerTwo.setOnAction(event -> {
            if(playerTwo.getSelectionModel().getSelectedItem() != null)
@@ -204,7 +220,7 @@ public class ViewPlayerMatches extends View {
         });
 
         winner.setLayoutX(matchPlayerTable.getLayoutX());
-        winner.setLayoutY(matchPlayerTable.getLayoutY() + 485);
+        winner.setLayoutY(matchPlayerTable.getLayoutY() + 570);
 
         winner.getItems().add(null);
 
@@ -216,7 +232,7 @@ public class ViewPlayerMatches extends View {
         });
 
         completed.setLayoutX(matchPlayerTable.getLayoutX() + 155);
-        completed.setLayoutY(matchPlayerTable.getLayoutY() + 485);
+        completed.setLayoutY(matchPlayerTable.getLayoutY() + 570);
 
         completed.getItems().addAll(true, false);
 
@@ -232,13 +248,13 @@ public class ViewPlayerMatches extends View {
 
     private void initDatePicker()
     {
-        datePicker.setLayoutX(teamTwo.getLayoutX() + 150);
-        datePicker.setLayoutY(teamTwo.getLayoutY());
+        datePicker.setLayoutX(games.getLayoutX() + 310);
+        datePicker.setLayoutY(games.getLayoutY());
 
         hourComboBox.setLayoutX(datePicker.getLayoutX());
-        hourComboBox.setLayoutY(datePicker.getLayoutY()+25);
+        hourComboBox.setLayoutY(datePicker.getLayoutY()+45);
         minuteComboBox.setLayoutX(datePicker.getLayoutX()+70);
-        minuteComboBox.setLayoutY(datePicker.getLayoutY()+25);
+        minuteComboBox.setLayoutY(datePicker.getLayoutY()+45);
 
         hourComboBox.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24);
@@ -373,7 +389,7 @@ public class ViewPlayerMatches extends View {
     private void initButtons()
     {
         addButton.setLayoutX(winner.getLayoutX());
-        addButton.setLayoutY(winner.getLayoutY()+25);
+        addButton.setLayoutY(winner.getLayoutY()+40);
 
         addButton.setOnAction(event -> {
 
@@ -481,5 +497,41 @@ public class ViewPlayerMatches extends View {
         }
 
         return result;
+    }
+
+    private void initLabels()
+    {
+        gamesLabel.setLayoutX(games.getLayoutX());
+        gamesLabel.setLayoutY(games.getLayoutY() - 17);
+
+        teamOneLabel.setLayoutX(teamOne.getLayoutX());
+        teamOneLabel.setLayoutY(teamOne.getLayoutY() - 17);
+
+        teamTwoLabel.setLayoutX(teamTwo.getLayoutX());
+        teamTwoLabel.setLayoutY(teamTwo.getLayoutY() - 17);
+
+        playerOneLabel.setLayoutX(playerOne.getLayoutX());
+        playerOneLabel.setLayoutY(playerOne.getLayoutY() - 17);
+
+        playerTwoLabel.setLayoutX(playerTwo.getLayoutX());
+        playerTwoLabel.setLayoutY(playerTwo.getLayoutY() - 17);
+
+        winnerLabel.setLayoutX(winner.getLayoutX());
+        winnerLabel.setLayoutY(winner.getLayoutY() - 17);
+
+        completedLabel.setLayoutX(completed.getLayoutX());
+        completedLabel.setLayoutY(completed.getLayoutY() - 17);
+
+        dateLabel.setLayoutX(datePicker.getLayoutX());
+        dateLabel.setLayoutY(datePicker.getLayoutY() - 17);
+
+        hourLabel.setLayoutX(hourComboBox.getLayoutX());
+        hourLabel.setLayoutY(hourComboBox.getLayoutY() - 17);
+
+        minuteLabel.setLayoutX(minuteComboBox.getLayoutX());
+        minuteLabel.setLayoutY(minuteComboBox.getLayoutY() - 17);
+
+        root.getChildren().addAll(gamesLabel, teamOneLabel, teamTwoLabel, playerOneLabel, playerTwoLabel, winnerLabel,
+                completedLabel, dateLabel, hourLabel, minuteLabel);
     }
 }
