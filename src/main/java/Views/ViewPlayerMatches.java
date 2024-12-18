@@ -1,235 +1,485 @@
 package Views;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import org.example.duetrockers.DAO.GameDAO;
 import org.example.duetrockers.DAO.MatchPlayerDAO;
-import org.example.duetrockers.entities.Player;
-import org.example.duetrockers.entities.Match;
+import org.example.duetrockers.DAO.PlayerDAO;
+import org.example.duetrockers.DAO.TeamDAO;
+import org.example.duetrockers.entities.Game;
 import org.example.duetrockers.entities.MatchPlayer;
+import org.example.duetrockers.entities.Player;
+import org.example.duetrockers.entities.Team;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class ViewPlayerMatches extends View {
 
-    private ListView<String> matchPlayerListView;
-    private TextField matchIDField, playerNicknameField, scoreField, matchStatusField;
-    private Button addButton, updateButton, deleteButton, returnButton;
 
+    private TableView<MatchPlayer> matchPlayerTable;
+    private Button addButton, updateButton, deleteButton, returnButton;
+    private Label titleLabel;
+
+    private ComboBox<Team> teamOne, teamTwo;
+    private ComboBox<Player> playerOne, playerTwo, winner;
+    private ComboBox<Game> games;
+    private ComboBox<Boolean> completed;
+    private ComboBox<Integer> hourComboBox, minuteComboBox;
+
+    private DatePicker datePicker;
+    private MatchPlayerDAO matchPlayerDAO;
+    private TeamDAO teamDAO;
+    private PlayerDAO playerDAO;
+    private GameDAO gameDAO;
+
+    private Player selectedPlayerOne, selectedPlayerTwo, selectedWinner;
+    private Game selectedGame;
+    private LocalDateTime selectedDateTime;
+    private LocalDate selectedDate;
+    private Integer selectedHour, selectedMinute;
+    private boolean isCompleted;
     private MatchPlayer selectedMatchPlayer;
 
-    public ViewPlayerMatches(int width, int height, ViewManager manager) {
+    public ViewPlayerMatches(int width, int height, ViewManager manager)
+    {
 
         super(width, height, manager);
     }
 
     @Override
-    protected void initializeView() {
-        Label titleLabel = new Label("Player Matches Management");
+    protected void initializeView()
+    {
+        titleLabel = new Label("Player Matches Management");
         titleLabel.setFont(new Font(24));
 
-        matchPlayerListView = new ListView<>();
+        matchPlayerTable = new TableView();
+        matchPlayerDAO = new MatchPlayerDAO();
+        teamDAO = new TeamDAO();
+        playerDAO = new PlayerDAO();
+        gameDAO = new GameDAO();
+
+        selectedPlayerOne = null;
+        selectedPlayerTwo = null;
+
+        teamOne = new ComboBox();
+        teamTwo = new ComboBox();
+
+        playerOne = new ComboBox();
+        playerTwo = new ComboBox();
+
+        completed = new ComboBox();
+        winner = new ComboBox();
+
+        games = new ComboBox();
+
+        hourComboBox = new ComboBox();
+        minuteComboBox = new ComboBox();
+
+        datePicker = new DatePicker();
+
+        addButton = new Button("Add");
+        deleteButton = new Button("Delete");
+        returnButton = new Button("Return");
+        updateButton = new Button("Update");
+
+        initTableView();
         refreshMatchPlayerList();
+        initComboBoxes();
+        initDatePicker();
+        initButtons();
+    }
 
-        matchPlayerListView.setPrefHeight(height / 2.75);
-        matchPlayerListView.setOnMouseClicked(mouseEvent -> {
-            String selected = matchPlayerListView.getSelectionModel().getSelectedItem();
+    private void initTableView()
+    {
+        //Skapa kolumner för TableView
+        TableColumn<MatchPlayer, String> gameColumn = new TableColumn<>("Game");
+        gameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getGame().toString()));
 
-            if (selectedMatchPlayer != null && selected != null &&
-                    selectedMatchPlayer.getMatch().getId() == Integer.parseInt(selected.split("-")[0])) {
-                matchPlayerListView.getSelectionModel().clearSelection();
-                clearForm();
-                selectedMatchPlayer = null;
-            } else {
-                fillFormWithMatchPlayerData(selected);
+        TableColumn<MatchPlayer, String> player1Column = new TableColumn<>("Player 1");
+        player1Column.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPlayer1().toString()));
+
+        TableColumn<MatchPlayer, String> player2Column = new TableColumn<>("Player 2");
+        player2Column.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPlayer2().toString()));
+
+        TableColumn<MatchPlayer, String> matchDateColumn = new TableColumn<>("Match Date");
+        matchDateColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getMatchDate().toString()));
+
+        TableColumn<MatchPlayer, Boolean> completedColumn = new TableColumn<>("Completed");
+        completedColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().isCompleted()));
+
+        TableColumn<MatchPlayer, String> winnerColumn = new TableColumn<>("Winner");
+        winnerColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
+                        cellData.getValue().getWinner() != null ? cellData.getValue().getWinner().toString() : "None"));
+
+        matchPlayerTable.getColumns().addAll(gameColumn, player1Column, player2Column, matchDateColumn, completedColumn, winnerColumn);
+
+        matchPlayerTable.setLayoutX(10);
+        matchPlayerTable.setLayoutY(10);
+
+        matchPlayerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if(newValue != null)
+            {
+                selectedMatchPlayer = newValue;
+                winner.getItems().clear();
+                winner.getItems().addAll(selectedMatchPlayer.getPlayer1(), selectedMatchPlayer.getPlayer2());
             }
         });
 
-        VBox formBox = createForm();
-
-        addButton = new Button("Add");
-        updateButton = new Button("Update");
-        deleteButton = new Button("Delete");
-        returnButton = new Button("Return");
-
-
-        HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton);
-
-        addButton.setOnAction(e -> addMatchPlayer());
-        updateButton.setOnAction(e -> updateMatchPlayer());
-        deleteButton.setOnAction(e -> deleteMatchPlayer());
-        returnButton.setOnAction(e -> manager.switchToPreviousView());
-
-        VBox layout = new VBox(10, titleLabel, matchPlayerListView, formBox, buttonBox);
-        layout.setLayoutX(20);
-        layout.setLayoutY(20);
-
-        root.getChildren().add(layout);
+        root.getChildren().add(matchPlayerTable);
     }
 
-    private VBox createForm() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(20);
-        gridPane.setVgap(5);
-
-        Label matchIDLabel = new Label("Match ID:");
-        matchIDField = new TextField();
-
-        Label playerNicknameLabel = new Label("Player Nickname:");
-        playerNicknameField = new TextField();
-
-        Label scoreLabel = new Label("Score:");
-        scoreField = new TextField();
-
-        Label matchStatusLabel = new Label("Match Status:");
-        matchStatusField = new TextField();
-
-        gridPane.add(matchIDLabel, 0, 0);
-        gridPane.add(matchIDField, 0, 1);
-
-        gridPane.add(playerNicknameLabel, 1, 0);
-        gridPane.add(playerNicknameField, 1, 1);
-
-        gridPane.add(scoreLabel, 0, 2);
-        gridPane.add(scoreField, 0, 3);
-
-        gridPane.add(matchStatusLabel, 1, 2);
-        gridPane.add(matchStatusField, 1, 3);
-
-        return new VBox(20, gridPane);
+    private void refreshMatchPlayerList()
+    {
+        matchPlayerTable.getItems().clear();
+        ObservableList<MatchPlayer> matchPlayers = FXCollections.observableArrayList(matchPlayerDAO.getAllMatchPlayers());
+        matchPlayerTable.setItems(matchPlayers);
     }
 
-    private void clearForm() {
-        matchIDField.clear();
-        playerNicknameField.clear();
-        scoreField.clear();
-        matchStatusField.clear();
+    private void initComboBoxes()
+    {
+        games.setLayoutX(matchPlayerTable.getLayoutX());
+        games.setLayoutY(matchPlayerTable.getLayoutY() + 405);
+
+        games.setOnAction(event -> {
+           if(games.getSelectionModel().getSelectedItem() != null)
+           {
+               populateTeamOne(games.getSelectionModel().getSelectedItem());
+               populateTeamTwo(games.getSelectionModel().getSelectedItem());
+               selectedGame = games.getSelectionModel().getSelectedItem();
+               winner.getItems().clear();
+           }
+        });
+
+        teamOne.setLayoutX(matchPlayerTable.getLayoutX());
+        teamOne.setLayoutY(matchPlayerTable.getLayoutY() + 435);
+
+        teamOne.setOnAction(event -> {
+
+            if(teamOne.getSelectionModel().getSelectedItem() != null)
+            {
+                populatePlayerOne(teamOne.getSelectionModel().getSelectedItem());
+            }
+        });
+
+        teamTwo.setLayoutX(matchPlayerTable.getLayoutX() + 155);
+        teamTwo.setLayoutY(matchPlayerTable.getLayoutY() + 435);
+
+        teamTwo.setOnAction(event -> {
+
+            if(teamTwo.getSelectionModel().getSelectedItem() != null)
+            {
+                populatePlayerTwo(teamTwo.getSelectionModel().getSelectedItem());
+            }
+        });
+
+        playerOne.setLayoutX(matchPlayerTable.getLayoutX());
+        playerOne.setLayoutY(matchPlayerTable.getLayoutY() + 460);
+
+        playerOne.setOnAction(event -> {
+
+            if(playerOne.getSelectionModel().getSelectedItem() != null)
+            {
+                selectedPlayerOne = playerOne.getSelectionModel().getSelectedItem();
+                updateWinner(selectedPlayerOne);
+            }
+        });
+
+        playerTwo.setLayoutX(matchPlayerTable.getLayoutX() + 155);
+        playerTwo.setLayoutY(matchPlayerTable.getLayoutY() + 460);
+
+        playerTwo.setOnAction(event -> {
+           if(playerTwo.getSelectionModel().getSelectedItem() != null)
+           {
+               selectedPlayerTwo = playerTwo.getSelectionModel().getSelectedItem();
+               updateWinner(selectedPlayerTwo);
+           }
+        });
+
+        winner.setLayoutX(matchPlayerTable.getLayoutX());
+        winner.setLayoutY(matchPlayerTable.getLayoutY() + 485);
+
+        winner.getItems().add(null);
+
+        winner.setOnAction(event -> {
+           if(winner.getSelectionModel().getSelectedItem() != null)
+           {
+               selectedWinner = winner.getSelectionModel().getSelectedItem();
+           }
+        });
+
+        completed.setLayoutX(matchPlayerTable.getLayoutX() + 155);
+        completed.setLayoutY(matchPlayerTable.getLayoutY() + 485);
+
+        completed.getItems().addAll(true, false);
+
+        if(completed.getSelectionModel().getSelectedItem() != null)
+        {
+            isCompleted = completed.getSelectionModel().getSelectedItem();
+        }
+
+        populateGames();
+
+        root.getChildren().addAll(teamOne, teamTwo, playerOne, playerTwo, winner, completed, games);
     }
 
-    private void refreshMatchPlayerList() {
-        matchPlayerListView.getItems().clear();
-        MatchPlayerDAO matchPlayerDAO = new MatchPlayerDAO();
-        List<MatchPlayer> matchPlayers = matchPlayerDAO.getAllMatchPlayers();
+    private void initDatePicker()
+    {
+        datePicker.setLayoutX(teamTwo.getLayoutX() + 150);
+        datePicker.setLayoutY(teamTwo.getLayoutY());
 
-        for (MatchPlayer mp : matchPlayers) {
-            matchPlayerListView.getItems().add(
-                    mp.getMatch().getId() + " - Player: " + mp.getPlayer().getNickname() +
-                            ", Score: " + mp.getScore() + ", Status: " + mp.getMatch().getStatus());
+        hourComboBox.setLayoutX(datePicker.getLayoutX());
+        hourComboBox.setLayoutY(datePicker.getLayoutY()+25);
+        minuteComboBox.setLayoutX(datePicker.getLayoutX()+70);
+        minuteComboBox.setLayoutY(datePicker.getLayoutY()+25);
+
+        hourComboBox.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24);
+        hourComboBox.setValue(12);
+
+        minuteComboBox.getItems().addAll(0, 15, 30, 45);
+        minuteComboBox.setValue(0);
+
+        hourComboBox.setOnAction(event -> {
+           if(hourComboBox.getSelectionModel().getSelectedItem() != null)
+           {
+               selectedHour = hourComboBox.getSelectionModel().getSelectedItem();
+           }
+        });
+
+        minuteComboBox.setOnAction(event -> {
+           if(minuteComboBox.getSelectionModel().getSelectedItem() != null)
+           {
+               selectedMinute = minuteComboBox.getSelectionModel().getSelectedItem();
+           }
+        });
+
+        datePicker.setOnAction(event -> {
+
+            if(datePicker.getValue() != null)
+            {
+                selectedDate = datePicker.getValue();
+            }
+
+        });
+
+        root.getChildren().addAll(datePicker, hourComboBox, minuteComboBox);
+    }
+
+    private void populateTeamOne(Game game)
+    {
+        teamOne.getItems().clear();
+
+        List<Team> teams = teamDAO.getAllTeams();
+
+        for(Team team: teams)
+        {
+            if(team.getGame().getGameName().equals(game.getGameName()))
+            {
+                teamOne.getItems().add(team);
+            }
+        }
+
+        if(teamOne.getItems().size() > 0)
+        {
+            teamOne.setValue(teamOne.getItems().get(0));
+            populatePlayerOne((Team)teamOne.getItems().get(0));
+        }
+
+    }
+
+    private void populateTeamTwo(Game game)
+    {
+        teamTwo.getItems().clear();
+
+        List<Team> teams = teamDAO.getAllTeams();
+
+        for(Team team: teams)
+        {
+            if(team.getGame().getGameName().equals(game.getGameName()))
+            {
+                teamTwo.getItems().add(team);
+            }
+        }
+
+        if(teamTwo.getItems().size() > 0)
+        {
+            teamTwo.setValue(teamTwo.getItems().get(0));
+            populatePlayerTwo((Team)teamTwo.getItems().get(0));
+        }
+
+    }
+
+    private void populatePlayerOne(Team comboTeam)
+    {
+        playerOne.getItems().clear();
+
+        List<Player> players = playerDAO.getAllPlayers();
+
+        for(Player player: players)
+        {
+            if(player.getTeam().getTeamName().equals(comboTeam.getTeamName()))
+            {
+                playerOne.getItems().add(player);
+            }
         }
     }
 
-    private void fillFormWithMatchPlayerData(String selectedMatchPlayerInfo) {
-        if (selectedMatchPlayerInfo == null || selectedMatchPlayerInfo.isEmpty()) {
-            clearForm();
-            return;
-        }
+    private void populatePlayerTwo(Team comboTeam)
+    {
+        playerTwo.getItems().clear();
 
-        int selectedMatchID = Integer.parseInt(selectedMatchPlayerInfo.split("-")[0].trim());
+        List<Player> players = playerDAO.getAllPlayers();
 
-        MatchPlayerDAO matchPlayerDAO = new MatchPlayerDAO();
-        selectedMatchPlayer = matchPlayerDAO.getAllMatchPlayers().stream()
-                .filter(mp -> mp.getMatch().getId() == selectedMatchID)
-                .findFirst()
-                .orElse(null);
-
-        if (selectedMatchPlayer != null) {
-            matchIDField.setText(String.valueOf(selectedMatchPlayer.getMatch().getId()));
-            playerNicknameField.setText(selectedMatchPlayer.getPlayer().getNickname());
-            scoreField.setText(String.valueOf(selectedMatchPlayer.getScore()));
-            matchStatusField.setText(selectedMatchPlayer.getMatch().getStatus());
+        for (Player player : players)
+        {
+            if (player.getTeam().getTeamName().equals(comboTeam.getTeamName())) {
+                playerTwo.getItems().add(player);
+            }
         }
     }
 
-    private void addMatchPlayer() {
-        String matchIDText = matchIDField.getText().trim();
-        String playerNicknameText = playerNicknameField.getText().trim();
-        String scoreText = scoreField.getText().trim();
-        String matchStatusText = matchStatusField.getText().trim();
+    private void populateGames()
+    {
+        games.getItems().clear();
 
-        if (matchIDText.isEmpty() || playerNicknameText.isEmpty() || scoreText.isEmpty() || matchStatusText.isEmpty()) {
-            System.out.println("All fields are required!");
-            return;
+        List<Game> gameList = gameDAO.getAllGames();
+
+        for(Game game: gameList)
+        {
+            games.getItems().add(game);
         }
 
-        Match match = new Match();
-        match.setId(Integer.parseInt(matchIDText));
-        match.setStatus(matchStatusText);
+        games.setValue(games.getItems().get(0));
+        populateTeamOne(gameList.get(0));
+        populateTeamTwo(gameList.get(0));
+    }
 
-        Player player = new Player();
-        player.setNickname(playerNicknameText);
+    private void updateWinner(Player player)
+    {
+        if(!winner.getItems().contains(player))
+        {
+            winner.getItems().add(player);
+        }
+    }
 
-        MatchPlayer matchPlayer = new MatchPlayer();
-        matchPlayer.setMatch(match);
-        matchPlayer.setPlayer(player);
-        matchPlayer.setScore(Integer.parseInt(scoreText));
+    private void initButtons()
+    {
+        addButton.setLayoutX(winner.getLayoutX());
+        addButton.setLayoutY(winner.getLayoutY()+25);
 
-        MatchPlayerDAO matchPlayerDAO = new MatchPlayerDAO();
-        if (matchPlayerDAO.saveMatchPlayer(matchPlayer)) {
-            System.out.println("MatchPlayer added successfully.");
+        addButton.setOnAction(event -> {
+
+            if(addMatch())
+            {
+                System.out.println("Succefully added a new match!");
+            }
+        });
+
+        deleteButton.setLayoutX(addButton.getLayoutX() + 50);
+        deleteButton.setLayoutY(addButton.getLayoutY());
+
+        deleteButton.setOnAction(event -> {
+            if(deleteMatch())
+            {
+                System.out.println("Succefully deleted a match!");
+            }
+        });
+
+        updateButton.setLayoutX(deleteButton.getLayoutX() + 60);
+        updateButton.setLayoutY(deleteButton.getLayoutY());
+
+        updateButton.setOnAction(event -> {
+           if(updateMatch())
+           {
+               System.out.println("Succefully updated a match!");
+           }
+        });
+
+        returnButton.setLayoutX(updateButton.getLayoutX() + 60);
+        returnButton.setLayoutY(updateButton.getLayoutY());
+
+        returnButton.setOnAction(event -> {
+           manager.switchToPreviousView();
+        });
+
+        root.getChildren().addAll(addButton, deleteButton, updateButton, returnButton);
+    }
+
+    private boolean addMatch()
+    {
+        boolean result = false;
+
+        LocalTime selectedTime = LocalTime.of(selectedHour, selectedMinute);
+        selectedDateTime = selectedDate.atTime(selectedTime);
+
+        MatchPlayer newMatch = new MatchPlayer(selectedGame, selectedPlayerOne, selectedPlayerTwo, selectedDateTime, isCompleted);
+
+        if(matchPlayerDAO.saveMatchPlayer(newMatch))
+        {
             refreshMatchPlayerList();
-            clearForm();
-        } else {
-            System.out.println("Failed to add MatchPlayer.");
+            result = true;
         }
+
+        return result;
     }
 
-    private void updateMatchPlayer() {
-        if (selectedMatchPlayer == null) {
-            System.out.println("Select a match player to update!");
-            return;
-        }
+    private boolean deleteMatch()
+    {
+        boolean result = false;
 
-        String scoreText = scoreField.getText().trim();
-        String matchStatusText = matchStatusField.getText().trim();
-
-        if (scoreText.isEmpty() || matchStatusText.isEmpty()) {
-            System.out.println("All fields are required!");
-            return;
-        }
-
-        selectedMatchPlayer.setScore(Integer.parseInt(scoreText));
-        selectedMatchPlayer.getMatch().setStatus(matchStatusText);
-
-        MatchPlayerDAO matchPlayerDAO = new MatchPlayerDAO();
-        if (matchPlayerDAO.updateMatchPlayer(selectedMatchPlayer)) {
-            System.out.println("MatchPlayer updated successfully.");
+        if(matchPlayerDAO.deleteMatchPlayer(selectedMatchPlayer))
+        {
             refreshMatchPlayerList();
-        } else {
-            System.out.println("Failed to update MatchPlayer.");
+            result = true;
         }
+        return result;
     }
 
-    private void deleteMatchPlayer() {
-        String selectedMatchPlayerInfo = matchPlayerListView.getSelectionModel().getSelectedItem();
-        if (selectedMatchPlayerInfo == null) {
-            System.out.println("Select a match player to delete!");
-            return;
+    private boolean updateMatch()
+    {
+        boolean result = false;
+
+        if(selectedHour != null && selectedMinute != null)
+        {
+            LocalTime selectedTime = LocalTime.of(selectedHour, selectedMinute);
+            selectedDateTime = selectedDate.atTime(selectedTime);
+            selectedMatchPlayer.setMatchDate(selectedDateTime);
         }
 
-        int selectedMatchID = Integer.parseInt(selectedMatchPlayerInfo.split("-")[0].trim());
-
-        MatchPlayerDAO matchPlayerDAO = new MatchPlayerDAO();
-        MatchPlayer matchPlayerToDelete = matchPlayerDAO.getAllMatchPlayers().stream()
-                .filter(mp -> mp.getMatch().getId() == selectedMatchID)
-                .findFirst()
-                .orElse(null);
-
-        if (matchPlayerToDelete == null) {
-            System.out.println("MatchPlayer not found!");
-            return;
+        if(selectedPlayerOne != null)
+        {
+            selectedMatchPlayer.setPlayer1(selectedPlayerOne);
         }
 
-        if (matchPlayerDAO.deleteMatchPlayer(matchPlayerToDelete)) {
-            System.out.println("MatchPlayer deleted successfully.");
-            clearForm();
+        if(selectedPlayerTwo != null)
+        {
+            selectedMatchPlayer.setPlayer2(selectedPlayerTwo);
+        }
+
+        if(selectedWinner != null)
+        {
+            selectedMatchPlayer.setWinner(selectedWinner);
+        }
+
+        if(selectedGame != null)
+        {
+            selectedMatchPlayer.setGame(selectedGame);
+        }
+
+        if(matchPlayerDAO.updateMatchPlayer(selectedMatchPlayer))
+        {
             refreshMatchPlayerList();
-        } else {
-            System.out.println("Failed to delete MatchPlayer.");
+            result = true;
         }
+
+        return result;
     }
 }

@@ -54,5 +54,10 @@ public class Game
         this.playerCount = playerCount;
     }
 
+    @Override
+    public String toString()
+    {
+        return gameName;
+    }
 }
 
