@@ -10,15 +10,15 @@ import static jakarta.persistence.FetchType.EAGER;
 public class Player{
 
     @Id
-    @Column(name = "person_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
-    @OneToOne(optional = false, fetch = EAGER)
-    @MapsId
-    @JoinColumn(name = "person_id")
+    @OneToOne
+    @JoinColumn(name = "person_id", nullable = false)
     private Person person;
 
-    @ManyToOne(fetch = EAGER)
+    @ManyToOne
     @JoinColumn (name = "team_id")
     private Team team;
 
