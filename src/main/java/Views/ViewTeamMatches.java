@@ -31,6 +31,8 @@ public class ViewTeamMatches extends View {
 
     public ViewTeamMatches(int width, int height, ViewManager manager) {
         super(width, height, manager);
+        matchTeamDAO = new MatchTeamDAO();
+        teamDAO = new TeamDAO();
         initializeView();
     }
 
