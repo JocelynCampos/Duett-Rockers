@@ -22,17 +22,18 @@ public class ViewTeamMatches extends View {
     private ListView<String> availableTeamsListView;
     private ListView<String> selectedTeamsListView;
     private TextField searchField;
-    private Button selectTeam1Button, getSelectTeam2Button;
+    private ComboBox<String> teamOneComboBox;
+    private ComboBox<String> teamTwoComboBox;
+    private Button selectTeam1Button, selectTeam2Button;
     private Team Team1, Team2;
     private Map<String, Integer> matchIdMap;
 
     private MatchTeamDAO matchTeamDAO;
     private TeamDAO teamDAO;
 
+
     public ViewTeamMatches(int width, int height, ViewManager manager) {
         super(width, height, manager);
-        matchTeamDAO = new MatchTeamDAO();
-        teamDAO = new TeamDAO();
         initializeView();
     }
 
@@ -41,6 +42,9 @@ public class ViewTeamMatches extends View {
 
         matchTeamDAO = new MatchTeamDAO();
         teamDAO = new TeamDAO();
+        teamOneComboBox = new ComboBox<>();
+        teamTwoComboBox = new ComboBox<>();
+
         matchIdMap = new HashMap<>();
 
         //Skapa titel
@@ -53,14 +57,21 @@ public class ViewTeamMatches extends View {
         deleteButton = new Button("Delete");
         returnButton = new Button("Return");
 
+        //Sökfält
+        searchField = new TextField("Search for teams...");
+
         //ListViews
         availableTeamsListView = new ListView<>();
         teamListView = new ListView<>();
+        selectedTeamsListView = new ListView<>();
+
+        selectTeam1Button = new Button("Select Team 1");
+        selectTeam2Button = new Button("Select Team 2");
 
         //Ladda data
         loadAvailableTeams();
         loadTeamMatches();
-        selectTeam();
+        setupSearchField();
 
         HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton);
 
@@ -104,10 +115,9 @@ public class ViewTeamMatches extends View {
 
         //Formulär Team1
         Label teamOneLabel = new Label("Team One: ");
-        ComboBox<String> teamOneCombobox = new ComboBox<>();
-        teamOneCombobox.getItems().addAll(availableTeamsListView.getItems());
-        teamOneCombobox.setOnAction(e -> {
-            String selectedTeam = teamOneCombobox.getValue();
+        teamOneComboBox.getItems().addAll(availableTeamsListView.getItems());
+        teamOneComboBox.setOnAction(e -> {
+            String selectedTeam = teamOneComboBox.getValue();
             if (selectedTeam != null) {
                 Team1 = teamDAO.getTeamByName(selectedTeam);
             }
@@ -115,22 +125,31 @@ public class ViewTeamMatches extends View {
 
         //Formulär Team2
         Label teamTwoLabel = new Label("Team Two: ");
-        ComboBox<String> teamTwoCombobox = new ComboBox<>();
-        teamTwoCombobox.getItems().addAll(availableTeamsListView.getItems());
-        teamTwoCombobox.setOnAction(e -> {
-            String selectedTeam = teamTwoCombobox.getValue();
+        teamTwoComboBox.getItems().addAll(availableTeamsListView.getItems());
+        teamTwoComboBox.setOnAction(e -> {
+            String selectedTeam = teamTwoComboBox.getValue();
             if (selectedTeam != null) {
                 Team2 = teamDAO.getTeamByName(selectedTeam);
             }
         });
 
         gridPane.add(teamOneLabel, 0, 0);
-        gridPane.add(teamOneCombobox, 1, 0);
+        gridPane.add(teamOneComboBox, 1, 0);
         gridPane.add(teamTwoLabel, 0, 1);
-        gridPane.add(teamTwoCombobox, 1, 1);
+        gridPane.add(teamTwoComboBox, 1, 1);
 
         formBox.getChildren().addAll(formTitle, gridPane);
         return formBox;
+    }
+
+    private void setupSearchField() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            List<String> filteredTeams = availableTeamsListView.getItems()
+                    .stream()
+                    .filter(team -> team.toLowerCase().contains(newValue.toLowerCase()))
+                    .toList();
+           availableTeamsListView.getItems().setAll(filteredTeams);
+        });
     }
 
     private void loadTeamMatches() {
@@ -142,30 +161,26 @@ public class ViewTeamMatches extends View {
         }
     }
 
+    private void resetSelection() {
+        teamOneComboBox.setValue(null);
+        teamTwoComboBox.setValue(null);
+        Team1 = null;
+        Team2 = null;
+    }
+
     private int getMatchID(String matchText) {
         return matchIdMap.getOrDefault(matchText, -1);
     }
 
     private void loadAvailableTeams() {
-        TeamDAO teamDAO = new TeamDAO();
         List<Team> teams = teamDAO.getAllTeams();
 
         for (Team team : teams) {
-            availableTeamsListView.getItems().add(team.getTeamName());
+            String teamName = team.getTeamName();
+            availableTeamsListView.getItems().add(teamName);
+            teamOneComboBox.getItems().add(teamName);
+            teamTwoComboBox.getItems().add(teamName);
         }
-    }
-
-    private void selectTeam() {
-        availableTeamsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (Team1 == null) {
-                    Team1 = teamDAO.getTeamByName(newValue);
-                } else if (Team2 == null) {
-                    Team2 = teamDAO.getTeamByName(newValue);
-                }
-                availableTeamsListView.getItems().remove(newValue);
-            }
-        });
     }
 
     private void handleAddMatch() {
@@ -176,11 +191,7 @@ public class ViewTeamMatches extends View {
             matchTeamDAO.saveMatchTeam(newMatch);
 
             teamListView.getItems().add(Team1.getTeamName() + " vs " + Team2.getTeamName());
-            Team1 = null;
-            Team2 = null;
-            availableTeamsListView.getItems().remove(Team1.getTeamName());
-            availableTeamsListView.getItems().remove(Team2.getTeamName());
-            loadTeamMatches();
+            resetSelection();
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Match added!");
@@ -205,6 +216,7 @@ public class ViewTeamMatches extends View {
             match.setTeam2(Team2);
             matchTeamDAO.updateMatchTeam(match);
             loadTeamMatches();
+            resetSelection();
             System.out.println("Updating team: " + selectedMatch);
         }
     }
