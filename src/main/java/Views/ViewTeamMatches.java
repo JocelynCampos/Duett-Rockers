@@ -1,6 +1,5 @@
 package Views;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,7 +24,7 @@ public class ViewTeamMatches extends View {
     private ComboBox<String> teamOneComboBox;
     private ComboBox<String> teamTwoComboBox;
     private Button selectTeam1Button, selectTeam2Button;
-    private Team Team1, Team2;
+    private Team team1, team2;
     private Map<String, Integer> matchIdMap;
 
     private MatchTeamDAO matchTeamDAO;
@@ -113,13 +112,13 @@ public class ViewTeamMatches extends View {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
 
-        //Formulär Team1
+        //Formulär team1
         Label teamOneLabel = new Label("Team One: ");
         teamOneComboBox.getItems().addAll(availableTeamsListView.getItems());
         teamOneComboBox.setOnAction(e -> {
             String selectedTeam = teamOneComboBox.getValue();
             if (selectedTeam != null) {
-                Team1 = teamDAO.getTeamByName(selectedTeam);
+                team1 = teamDAO.getTeamByName(selectedTeam);
             }
         });
 
@@ -129,7 +128,7 @@ public class ViewTeamMatches extends View {
         teamTwoComboBox.setOnAction(e -> {
             String selectedTeam = teamTwoComboBox.getValue();
             if (selectedTeam != null) {
-                Team2 = teamDAO.getTeamByName(selectedTeam);
+                team2 = teamDAO.getTeamByName(selectedTeam);
             }
         });
 
@@ -148,7 +147,7 @@ public class ViewTeamMatches extends View {
                     .stream()
                     .filter(team -> team.toLowerCase().contains(newValue.toLowerCase()))
                     .toList();
-           availableTeamsListView.getItems().setAll(filteredTeams);
+            availableTeamsListView.getItems().setAll(filteredTeams);
         });
     }
 
@@ -164,8 +163,8 @@ public class ViewTeamMatches extends View {
     private void resetSelection() {
         teamOneComboBox.setValue(null);
         teamTwoComboBox.setValue(null);
-        Team1 = null;
-        Team2 = null;
+        team1 = null;
+        team2 = null;
     }
 
     private int getMatchID(String matchText) {
@@ -173,6 +172,10 @@ public class ViewTeamMatches extends View {
     }
 
     private void loadAvailableTeams() {
+        availableTeamsListView.getItems().clear();
+        teamOneComboBox.getItems().clear();
+        teamTwoComboBox.getItems().clear();
+
         List<Team> teams = teamDAO.getAllTeams();
 
         for (Team team : teams) {
@@ -184,40 +187,57 @@ public class ViewTeamMatches extends View {
     }
 
     private void handleAddMatch() {
-        if (Team1 != null && Team2 != null) {
+        if (team1 != null && team2 != null) {
+
+            if (team1.equals(team2)) {
+                showAlert(Alert.AlertType.WARNING,"Invalid selection","Cannot add a match with same team.");
+                return;
+            }
             MatchTeam newMatch = new MatchTeam();
-            newMatch.setTeam1(Team1);
-            newMatch.setTeam2(Team2);
-            matchTeamDAO.saveMatchTeam(newMatch);
+            newMatch.setTeam1(team1);
+            newMatch.setTeam2(team2);
 
-            teamListView.getItems().add(Team1.getTeamName() + " vs " + Team2.getTeamName());
-            resetSelection();
+            try {
+                matchTeamDAO.saveMatchTeam(newMatch);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Match added!");
-            alert.setHeaderText(null);
-            alert.setContentText("Match between " + newMatch.getTeam1().getTeamName() + " and " + newMatch.getTeam2().getTeamName() + " has succsessfully been created!");
-            alert.showAndWait();
+                teamListView.getItems().add(team1.getTeamName() + " vs " + team2.getTeamName());
+                resetSelection();
 
+                showAlert(Alert.AlertType.INFORMATION,"Match added!","Match between" + newMatch.getTeam1().getTeamName()
+                        + " and " + newMatch.getTeam2().getTeamName()
+                        + " has been create successfully.");
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate match","Choice is not possible. A match between these teams already exist.");
+            }
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error..");
-            alert.setHeaderText(null);
-            alert.setContentText("\"Choose two teams before creating a match!\"");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.WARNING,"Error.","Choose two teams before creating a match!");
         }
     }
 
     private void handleUpdateMatch() {
         String selectedMatch = teamListView.getSelectionModel().getSelectedItem();
+
         if (selectedMatch != null) {
-            MatchTeam match = matchTeamDAO.getMatchTeamById(getMatchID(selectedMatch));
-            match.setTeam1(Team1);
-            match.setTeam2(Team2);
-            matchTeamDAO.updateMatchTeam(match);
-            loadTeamMatches();
-            resetSelection();
-            System.out.println("Updating team: " + selectedMatch);
+
+            int matchId = getMatchID(selectedMatch);
+            MatchTeam match = matchTeamDAO.getMatchTeamById(matchId);
+
+            if (team1 != null && team2 != null) {
+                try {
+                    match.setTeam1(team1);
+                    match.setTeam2(team2);
+                    matchTeamDAO.updateMatchTeam(match);
+                    loadTeamMatches();
+                    resetSelection();
+                    showAlert(Alert.AlertType.INFORMATION, "Match Updated.", "Match was successfully updated!");
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Duplicate!", "This match already exist.");
+                }
+            } else {
+                showAlert(Alert.AlertType.WARNING, "Missing selection", "Please select two teams.");
+            }
+        } else {
+            showAlert(Alert.AlertType.WARNING,"No selection made.","Select a match to update. ");
         }
     }
 
@@ -225,23 +245,23 @@ public class ViewTeamMatches extends View {
         String selectedMatch = teamListView.getSelectionModel().getSelectedItem();
         if (selectedMatch != null) {
             int matchId = getMatchID(selectedMatch);
-            if (matchId != 1) {
+            if (matchId != -1) {
                 matchTeamDAO.deleteMatchTeam(matchId);
                 teamListView.getItems().remove(selectedMatch);
-                System.out.println("Match deleted: " + selectedMatch);
+                showAlert(Alert.AlertType.INFORMATION, "Match deleted.", "Match was successfully deleted.");
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Could not find the selected match to delete");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Error.", "Could not delete.");
             }
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error.");
-            alert.setHeaderText(null);
-            alert.setContentText("No match selected to delete.");
-            alert.showAndWait();
+            showAlert(Alert.AlertType.WARNING, "No selection","Select a match to delete.");
         }
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
