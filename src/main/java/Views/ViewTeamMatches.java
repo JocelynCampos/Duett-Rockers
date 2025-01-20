@@ -189,7 +189,7 @@ public class ViewTeamMatches extends View {
     private void handleAddMatch() {
         if (team1 != null && team2 != null) {
 
-            if (team1.equals(team2)) {
+            if (team1.getTeamName().equalsIgnoreCase(team2.getTeamName())) {
                 showAlert(Alert.AlertType.WARNING,"Invalid selection","Cannot add a match with same team.");
                 return;
             }
