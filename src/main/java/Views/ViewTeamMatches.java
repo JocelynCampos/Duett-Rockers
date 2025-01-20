@@ -203,7 +203,7 @@ public class ViewTeamMatches extends View {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error..");
             alert.setHeaderText(null);
-            alert.setContentText("\"Choose two teams before creating a match!\"");
+            alert.setContentText("Choose two teams before creating a match!");
             alert.showAndWait();
         }
     }
