@@ -56,7 +56,9 @@ public class MatchTeamDAO {
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
+            System.out.println("Test, starting transaction...");
             transaction.begin();
+            System.out.println("Test successful.");
             entityManager.merge(matchTeam);
             transaction.commit();
             return true;
