@@ -18,7 +18,7 @@ import java.util.Map;
 public class ViewTeamMatches extends View {
 
     private ListView<String> teamListView;
-    private Button addButton, updateButton, deleteButton, returnButton;
+    private Button addButton, updateButton, deleteButton, returnButton, clearFieldsButton;
     private ListView<String> availableTeamsListView;
     private ListView<String> selectedTeamsListView;
     private TextField searchField;
@@ -56,6 +56,7 @@ public class ViewTeamMatches extends View {
         updateButton = new Button("Update");
         deleteButton = new Button("Delete");
         returnButton = new Button("Return");
+        clearFieldsButton = new Button("Clear Fields");
 
         //Sökfält
         searchField = new TextField("Search for teams...");
@@ -83,12 +84,13 @@ public class ViewTeamMatches extends View {
             }
         });
 
-        HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton);
+        HBox buttonBox = new HBox(10, addButton, updateButton, deleteButton, returnButton, clearFieldsButton);
 
         addButton.setOnAction(e -> handleAddMatch());
         updateButton.setOnAction(e -> handleUpdateMatch());
         deleteButton.setOnAction(e -> handleDeleteMatch());
         returnButton.setOnAction(e -> manager.switchToPreviousView());
+        clearFieldsButton.setOnAction(actionEvent -> clearFields());
 
 
         root.getChildren().addAll(titleLabel, availableTeamsListView, teamListView, buttonBox);
@@ -154,11 +156,15 @@ public class ViewTeamMatches extends View {
 
     private void setupSearchField() {
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            List<String> filteredTeams = availableTeamsListView.getItems()
-                    .stream()
-                    .filter(team -> team.toLowerCase().contains(newValue.toLowerCase()))
-                    .toList();
-            availableTeamsListView.getItems().setAll(filteredTeams);
+            if (newValue == null || newValue.isEmpty()) {
+                loadAvailableTeams();
+            } else {
+                List<String> filteredTeams = availableTeamsListView.getItems()
+                        .stream()
+                        .filter(team -> team.toLowerCase().contains(newValue.toLowerCase()))
+                        .toList();
+                availableTeamsListView.getItems().setAll(filteredTeams);
+            }
         });
     }
 
@@ -204,22 +210,25 @@ public class ViewTeamMatches extends View {
                 showAlert(Alert.AlertType.WARNING,"Invalid selection","Cannot add a match with same team.");
                 return;
             }
+
+            if (matchTeamDAO.ifMatchExists(team1, team2)) {
+                showAlert(Alert.AlertType.WARNING, "Duplicate match", "Match between these teams already exist.");
+                return;
+            }
+
+            //skapa ny match
             MatchTeam newMatch = new MatchTeam();
             newMatch.setTeam1(team1);
             newMatch.setTeam2(team2);
 
-            try {
-                matchTeamDAO.saveMatchTeam(newMatch);
+            matchTeamDAO.saveMatchTeam(newMatch);
 
-                teamListView.getItems().add(team1.getTeamName() + " vs " + team2.getTeamName());
-                resetSelection();
+            teamListView.getItems().add(team1.getTeamName() + " vs " + team2.getTeamName());
+            resetSelection();
 
-                showAlert(Alert.AlertType.INFORMATION,"Match added!","Match between " + newMatch.getTeam1().getTeamName()
-                        + " and " + newMatch.getTeam2().getTeamName()
-                        + " has been created successfully.");
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Duplicate match","Choice is not possible. A match between these teams already exist.");
-            }
+            showAlert(Alert.AlertType.INFORMATION,"Match added!","Match between " + newMatch.getTeam1().getTeamName()
+                    + " and " + newMatch.getTeam2().getTeamName()
+                    + " has been created successfully.");
         } else {
             showAlert(Alert.AlertType.WARNING,"Error.","Choose two teams before creating a match!");
         }
@@ -248,9 +257,13 @@ public class ViewTeamMatches extends View {
                 match.setTeam1(updatedTeam1);
                 match.setTeam2(updatedTeam2);
                 matchTeamDAO.updateMatchTeam(match);
+                teamListView.getItems().clear();
+                matchIdMap.clear();
+
                 loadTeamMatches();
                 resetSelection();
                 showAlert(Alert.AlertType.INFORMATION, "Match Updated.", "Match was successfully updated!");
+
             } catch (Exception e) {
                 showAlert(Alert.AlertType.ERROR, "Duplicate!", "This match already exist.");
             }
@@ -288,6 +301,21 @@ public class ViewTeamMatches extends View {
         } else {
             System.out.println("Match not found.." + selectedMatch);
         }
+    }
+
+    public void clearFields () {
+        teamOneComboBox.setValue(null);
+        teamTwoComboBox.setValue(null);
+
+        team1 = null;
+        team2 = null;
+
+        selectedTeamsListView.getItems().clear();
+        searchField.clear();
+        matchIdMap.clear();
+        loadAvailableTeams();
+        loadTeamMatches();
+
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {

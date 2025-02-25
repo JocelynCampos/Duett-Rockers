@@ -2,6 +2,7 @@ package org.example.duetrockers.DAO;
 
 import jakarta.persistence.*;
 import org.example.duetrockers.entities.MatchTeam;
+import org.example.duetrockers.entities.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,5 +100,19 @@ public class MatchTeamDAO {
         }
         return false;
 
+    }
+
+    public boolean ifMatchExists(Team team1, Team team2) {
+        List<MatchTeam> existingMatches = getAllMatchTeams();
+
+        for (MatchTeam match : existingMatches) {
+            boolean sameTeam = (match.getTeam1().equals(team1) && match.getTeam2().equals(team2)) ||
+            (match.getTeam1().equals(team2) && match.getTeam2().equals(team1));
+
+            if (sameTeam) {
+                return true;
+            }
+        }
+        return false;
     }
 }

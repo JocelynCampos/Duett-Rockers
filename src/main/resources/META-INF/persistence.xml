@@ -4,7 +4,7 @@
              version="2.0">
 
     <persistence-unit name="myconfig">
-      
+
         <class>org.example.duetrockers.entities.Person</class>
         <class>org.example.duetrockers.entities.Staff</class>
         <class>org.example.duetrockers.entities.Game</class>
@@ -22,13 +22,14 @@
             <property name="jakarta.persistence.jdbc.user"
                       value="root"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="LösenSkaStåHär"/>
+                      value="Lösen"/>
 
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
 
             <!-- Automatic schema export -->
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.import_files" value="import.sql"/>
 
             <!-- SQL statement logging -->
             <property name="hibernate.show_sql" value="true"/>
