@@ -16,13 +16,13 @@
         <properties>
             <!-- mySQL -->
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost/pipergamesdb"/>
+                      value="jdbc:mysql://192.168.1.236/pipergamesdb"/>
 
             <!-- Credentials -->
             <property name="jakarta.persistence.jdbc.user"
-                      value="root"/>
+                      value="bill"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="Lösen"/>
+                      value="clinton"/>
 
 
             <!-- GLÖM INTE ATT TA BORT DITT LÖSENORD INNAN DU PUSHAR!! -->
