@@ -1,6 +1,7 @@
 package org.example.duetrockers.DAO;
 
 import jakarta.persistence.*;
+import org.example.duetrockers.entities.Game;
 import org.example.duetrockers.entities.MatchTeam;
 import org.example.duetrockers.entities.Team;
 
@@ -21,6 +22,7 @@ public class MatchTeamDAO {
             transaction.begin();
             entityManager.persist(matchTeam);
             transaction.commit();
+            System.out.println("Match with ID: " + matchTeam.getId() + " is saved.");
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
