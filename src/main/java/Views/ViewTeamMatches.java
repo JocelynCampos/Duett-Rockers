@@ -5,8 +5,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.example.duetrockers.DAO.GameDAO;
 import org.example.duetrockers.DAO.MatchTeamDAO;
 import org.example.duetrockers.DAO.TeamDAO;
+import org.example.duetrockers.entities.Game;
 import org.example.duetrockers.entities.MatchTeam;
 import org.example.duetrockers.entities.Team;
 
@@ -169,6 +171,8 @@ public class ViewTeamMatches extends View {
     }
 
     private void loadTeamMatches() {
+        teamListView.getItems().clear();
+        matchIdMap.clear();
         List<MatchTeam> matches = matchTeamDAO.getAllMatchTeams();
         for (MatchTeam match : matches) {
             String displayText = match.getTeam1().getTeamName() + " vs " + match.getTeam2().getTeamName();
@@ -220,11 +224,30 @@ public class ViewTeamMatches extends View {
             MatchTeam newMatch = new MatchTeam();
             newMatch.setTeam1(team1);
             newMatch.setTeam2(team2);
+            System.out.println("Saving match: " + newMatch.getTeam1().getTeamName()+ " vs" + newMatch.getTeam2().getTeamName());
 
-            matchTeamDAO.saveMatchTeam(newMatch);
+            GameDAO gameDAO = new GameDAO();
+            Game defaultGame = new Game();
+            defaultGame.setGameName("Default");
 
-            teamListView.getItems().add(team1.getTeamName() + " vs " + team2.getTeamName());
+            boolean gameSaved = gameDAO.saveGame(defaultGame);
+            if (!gameSaved) {
+                System.out.println("ERROR. Match not successfully saved");
+                showAlert(Alert.AlertType.ERROR, "Database error", "Match was not saved.");
+                return;
+            }
+            newMatch.setGame(defaultGame);
+
+            boolean matchSaved = matchTeamDAO.saveMatchTeam(newMatch);
+            if (!matchSaved) {
+                System.out.println("Error. Failed to add match.");
+                showAlert(Alert.AlertType.ERROR, "DataBase Error", "Match was not saved.");
+                return;
+            }
+
+            System.out.println("Saved successfully.");
             resetSelection();
+            loadTeamMatches();
 
             showAlert(Alert.AlertType.INFORMATION,"Match added!","Match between " + newMatch.getTeam1().getTeamName()
                     + " and " + newMatch.getTeam2().getTeamName()
@@ -276,7 +299,7 @@ public class ViewTeamMatches extends View {
         String selectedMatch = teamListView.getSelectionModel().getSelectedItem();
         if (selectedMatch != null) {
             int matchId = getMatchID(selectedMatch);
-            if (matchId != 1) {
+            if (matchId != 0) {
                 matchTeamDAO.deleteMatchTeam(matchId);
                 teamListView.getItems().remove(selectedMatch);
                 showAlert(Alert.AlertType.INFORMATION, "Match deleted.", "Match was successfully deleted.");

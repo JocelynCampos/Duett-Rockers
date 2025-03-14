@@ -32,9 +32,24 @@ public class Person {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "role")
+    private Role role;
+
     public Person()
     {
 
+    }
+
+    public Person(String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickname = nickname;
+        this.street = street;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+        this.email = email;
+        this.role = role;
     }
 
     public Person(String firstName, String lastName, String nickname, String street, String postalCode, String city, String country, String email)
@@ -49,9 +64,12 @@ public class Person {
         this.email = email;
     }
 
+    public Role getRole() {
+        return role;
+    }
 
-    private enum Role {
-        Staff, Player
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public int getId() {
